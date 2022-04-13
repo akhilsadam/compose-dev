@@ -1,5 +1,4 @@
-data/
-doc/
-blueprint*
-LICENSE
-package*
+__pycache__
+.pytest_cache
+.ipynb_checkpoints
+.hypothesis

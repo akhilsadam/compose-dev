@@ -7,16 +7,10 @@ import app.options
 ipa = sys.argv[1]
 app.options.options.sethost(ipa)
 
-def init_app():
-    """Construct core Flask application with possible Dash app."""
-    fapp = Flask(__name__, instance_relative_config=False)
-    fapp.config.from_object('config.Config')
+import logging
+logger = logging.getLogger('root')
 
-    with fapp.app_context():
-        import app.api.data
-
-        return fapp
-
+from app import init_app
 """Application entry point."""
 if __name__ == "__main__":
     app = init_app()

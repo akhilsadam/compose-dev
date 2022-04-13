@@ -1,0 +1,21 @@
+{% extends "layout.jinja2" %}
+
+{% block content %}
+<div class="card">
+  <h1 class="site-title">{{ title }}</h1>
+  <a href="/" class="dash-link">
+    <span>home</span>
+    <i class="fa-solid fa-diamond"></i>
+  </a>
+</div>
+<div class="avance-reculer"></div>
+<div class="card colz">
+{{ general }}
+<iframe class="empdf" id="empdf" type="text/html" src="{{ url_for('static', filename='doc/article.html') }}" height="100%" width="100%" frameborder="0" scrolling="yes" onload="resizeIframe(this)"></iframe>
+</div>
+</div>
+{% endblock %}
+
+{% block content2 %}
+{% include 'analyticsPDF.jinja2' %}
+{% endblock %}

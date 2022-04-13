@@ -1,0 +1,15 @@
+{
+    "devDependencies": {
+        "@appnest/readme": "^1.2.7"
+    },
+    "name": "compose",
+    "version": "0.0.2",
+    "description": "An containerized Flask-Redis-Kubernetes application to analyze the role of music in communication. Final Project for COE332.",
+    "logo.src": "https://github.com/akhilsadam/positional-iss/blob/67af1d3f1f8941332f88cc2ab44aa6c9561fcbe2/app/static/img/stellar_disk.png",
+    "contributors": [
+        { "name": "Anneris Rodriguez" },
+        { "name": "Akhil Sadam", "url": "https://github.com/akhilsadam" },
+        { "name": "David Ventura Diaz" }
+    ],
+    "license": "MIT"
+}

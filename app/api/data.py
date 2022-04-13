@@ -12,6 +12,7 @@ import logging
 logger = logging.getLogger('root')
 
 from app.options import options
+from app.api.schema import *
 
 import redis
 
@@ -26,6 +27,18 @@ def redis_client():
 
 mainkey='meteorite_landings'
 
+def data_out():
+    """Get Meteorite Landing observations from Redis
+        Returns:
+            list: a list of dictionaries contain ML data.
+    """
+    if data.loaded == False:
+        data.data_in()
+    rd = redis_client()
+    return [rd.hgetall(key) for key in rd.keys()]
+
+# IMPORTANT: make sure to name the class you use the same as the filename!
+# IMPORTANT: any non-route methods should not be in the class!
 class data(MethodResource):
 
     loaded = False      
@@ -33,6 +46,14 @@ class data(MethodResource):
     @app.route("/data", methods=['POST'])
     def data_in():
         """Get Meteorite Landing observations from website to Redis.
+        ---
+        post:
+          description: Get Meteorite Landing data from Redis.
+          security:
+            - ApiKeyAuth: []
+          responses:
+            201:
+              description: Update Redis database 
         """
         try:
             dt = js.loads(rqs.get("https://raw.githubusercontent.com/wjallen/coe332-sample-data/main/ML_Data_Sample.json")
@@ -45,16 +66,6 @@ class data(MethodResource):
             logger.critical(E)
         else:
             return "Successful Load!"
-
-    def data():
-        """Get Meteorite Landing observations from Redis
-            Returns:
-                list: a list of dictionaries contain ML data.
-        """
-        if data.loaded == False:
-            data.data_in()
-        rd = redis_client()
-        return [rd.hgetall(key) for key in rd.keys()]
 
     @app.route("/data", methods=['GET'])
     def data_io():
@@ -71,17 +82,11 @@ class data(MethodResource):
             required: false
             example: 0
           responses:
-			200:
-			  description: Return Meteorite Landing data as json.
-			  content:
-				application/json
-        post:
-          description: Get Meteorite Landing data from Redis.
-          security:
-            - ApiKeyAuth: []
-          responses:
-            201:
-                description: Updated Redis database.
+            200:
+              description: Return API HTML
+              content:
+                application/json:
+                  schema: HTML            
         """
         a0 = rq.args.get('start', 0)
         route = '/degrees'
@@ -91,7 +96,7 @@ class data(MethodResource):
             logger.error(f'{route}:{msg}')
             return msg
         # logger.info(f"GET : {route}")
-        out = data.data()[st:]
+        out = data_out()[st:]
         print(out)
         return jsonify(out)
 

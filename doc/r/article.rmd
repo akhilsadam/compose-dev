@@ -1,0 +1,78 @@
+---
+title: "positional-iss"
+author:
+  - name: Akhil Sadam |  as97822
+    affiliation: Aerospace Department, University of Texas at Austin
+    email: <akhil.sadam@utexas.edu>
+date: '`r format(Sys.time(), "%d %B, %Y")`'
+abstract: 'An containerized Flask webserver designed for querying ISS sightings and positions on February 13, 2022. Midterm project for COE332. R is used to produce documentation.'
+# at least one keyword must be supplied
+keywords: [positional-iss, Docker, Flask, Python3, R]
+links-to-footnotes: true
+paged-footnotes: true
+nocite: '@*'
+output:
+  pagedown::jss_paged:
+    self_contained: true
+    pandoc_args: --mathjax
+    md_extensions: +raw_html
+link-citations: yes
+# uncomment this line to produce HTML and PDF in RStudio:
+knit: pagedown::chrome_print
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,
+                      fig.align = 'center')
+#require(magick)
+library("jpeg")
+require("R.utils")
+library("animation")
+library("XML")
+library("methods")
+library("httr")
+```
+
+```{r child = '../motivate.md'}
+```
+
+```{r child = '../implement.md'}
+```
+
+```{r child = '../input.md'}
+```
+
+```{r child = '../inputR.md'}
+```
+
+```{r child = '../install.md'}
+```
+
+```{r child = '../installR.md'}
+```
+
+```{r child = '../usage.md'}
+```
+
+```{r child = '../ethics.md'}
+```
+
+```{=html}
+<!-- This '<div id="refs"></div>' needs to 
+be here if you have appendix pages 
+otherwise you can remove it.-->
+```
+::: {#refs}
+:::
+
+# Appendix {-}
+
+## Installation Detail
+
+```{r child = '../installDetail.md'}
+```
+
+```{r child = '../api.md'}
+```
+
+

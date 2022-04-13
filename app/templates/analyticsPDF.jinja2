@@ -1,0 +1,20 @@
+<script type="text/javascript">
+window.onload = function() {
+   let myiFrame = document.getElementById("empdf");
+   let doc = myiFrame.contentDocument;
+   doc.head.innerHTML = doc.head.innerHTML + '<link rel="stylesheet" href="{{ url_for('static', filename='dist/css/pdf.css') }}" />' + '<link rel="stylesheet" href="{{ url_for('static', filename='dist/css/scroll.css') }}" />' + '<link rel="stylesheet" href="{{ url_for('static', filename='dist/css/avance.css') }}" />';
+   // document.head.innerHTML = document.head.innerHTML + '<link rel="stylesheet" href="{{ url_for('static', filename='dist/css/noscroll.css') }}" />';
+   doc.body.innerHTML = doc.body.innerHTML +
+   unescape('%3Cscript type="text/javascript"%3E' +
+   ' window.onscroll = () => {' +
+   'let scrollTop = window.scrollY;'+
+   'let docHeight = document.body.offsetHeight;'+
+   'let winHeight = window.innerHeight;'+
+   'let scrollPercent = scrollTop / (docHeight - winHeight);'+
+   'let scrollPercentRounded = Math.round(scrollPercent * 100);'+
+   'document.querySelector(".avance-reculer").style.background ='+
+   '`linear-gradient(to right, rgb(188, 45, 41) ${scrollPercentRounded}%, rgb(23, 20, 18) ${scrollPercentRounded}%)`;}'+
+   ' %3C/script%3E');
+   doc.body.innerHTML = '<div class="avance-reculer"></div>' + doc.body.innerHTML;
+}
+</script>

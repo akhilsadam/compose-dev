@@ -1,0 +1,41 @@
+:root {
+    --aijiro: rgba(235, 246, 247, 1);
+    --mashiro: rgb(255, 255, 255);
+    --zoge-iro: rgb(255, 255, 240);
+    --hakushi: rgb(249, 251, 255);
+    --hakushi-alph: rgb(249, 251, 255, 0.5);
+    --kokushoku: rgb(23, 20, 18);
+    --kokushoku-alph: rgba(23, 20, 18, 0.2);
+    /* not accurate */
+    --aijiro-haiiro: #A0A3A4;
+    --haiiro: rgba(91, 90, 92, 0.5);
+    --sukaitsuri-iro: rgb(220, 240, 250);
+}
+
+
+/* width */
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+
+/* Track */
+
+::-webkit-scrollbar-track {
+    background: var(--kokushoku);
+}
+
+
+/* Handle */
+
+ ::-webkit-scrollbar-thumb {
+    background: var(--aijiro);
+}
+
+
+/* Handle on hover */
+
+ ::-webkit-scrollbar-thumb:hover {
+    background: var(--hakushi);
+}

@@ -1,0 +1,19 @@
+<script>
+  function resizeIframe(obj) {
+    obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
+  }
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+@import url('{{ url_for('static', filename='font/Kiona-Regular.ttf') }}');
+@import url('{{ url_for('static', filename='font/AronGrotesque-light.ttf') }}');
+</style>
+  <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/scroll.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/styles.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/avance.css') }}" />
+  <link rel="stylesheet" href="https://use.typekit.net/uqq2lcv.css">
+  <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v6.0.0/css/all.css"
+      crossorigin="anonymous"
+  />

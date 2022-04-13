@@ -6,7 +6,7 @@ marshmallow
 webargs
 redis
 requests
-flask-apispec
+flask-apispec==0.11.0
 python-dotenv
 numpy
 matplotlib 
@@ -14,3 +14,7 @@ jpcm
 pynverse
 colour_science
 pytest
+musicpy
+nrclex
+pretty_midi
+libfmp

@@ -1,0 +1,23 @@
+.avance-reculer {
+    position: fixed;
+    top: 0;
+    height: 5px;
+    width: 100%;
+    background: transparent;
+}
+
+.avance-recule {
+    position: sticky;
+    bottom: 20px;
+    margin-left: auto;
+    margin-right: 20px;
+    right: 0px;
+    height: 3em;
+    width: 3em;
+    border-radius: 50%;
+    background: transparent;
+    -webkit-mask-image: url("/static/svg/circle.svg");
+    mask-image: url("/static/svg/circle.svg");
+    -webkit-mask-size: 3em 3em;
+    mask-size: 3em 3em;
+}
