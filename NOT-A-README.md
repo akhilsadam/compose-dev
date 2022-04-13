@@ -7,10 +7,38 @@
  - `app/api/register` will generate api and run some basic tests on every route (tests that they do return an output).
  - `app/api/schema` lists possible output types (you can use these names in the route docstrings).
 - `app/core/` contains all the main chord-analysis code, with example data.
+
+- `app/__init__.py` does some more Flask config related to static files.
+- `app/assets.py` collects any images/other static website files.
 - `app/log.py` defines the default logger.
 - `app/options.py` defines default options, like the Flask and Redis urls, among others.
-## data
- - `data` contains Redis backups for persistency.
+- `app/routes.py` does the most important job; adds every route to the Flask server and to the list of routes for api-generation. Also has home, pdf, and API GUI routes.
+## redis-data
+ - `redis-data` contains Redis backups for persistency.
+
+## doc
+ -  `doc` contains markdown files for the README and PDF, as well as an R script to join the pdf together.
+
+## scripts
+ - `scripts` contains Bash scripts to run the Flask with Redis automatically; that is, no need to check the IP address manually, just use the make commands!
+
+## test
+- `test` is a folder in which all pytesting files should be placed. Do not try to test routes (that will return incredibly confusing errors), just test simple functions. Waiting for a clarification from Dr. Allen.
+
+## regular files
+- Dockerfile :  self-evident
+- Makefile: self-evident
+- LICENSE: self-evident
+- requirements.txt: self-evident
+- testall.py: a file that simply runs pytest, so that we can test from container.
+- NOT-A-README:  this file.
+- README: the actual (auto-generated) readme file.
+- blueprint.json: some values used to generate the readme.
+- blueprint.md: a template for the readme markdown files.
+- package.json & package-lock.json: more readme generation files
+- config.py : sets up all filepaths.
+- core.py :  the application start point; where we actually instantiate Flask!
+
 
 ## other
  - `app/static`, `app/templates` can be ignored for now. Those are GUI related stuff that would be fairly simple and of last importance.
