@@ -17,7 +17,7 @@ Files (and what needs to be done to them!)
 <details>
 <summary>Details (dropdown)</summary>
 
-###[@Akhil]:
+### [@Akhil]:
 #### A Redis database will be used to store the following data: (example objects can be found in `\app\core\midi`, `\app\core\chord-progressions`, `\app\core\sf2\`)
 ##### Immutable data packaged with the application:
 - Array: a table of chords, each with their corresponding emotion vector.
@@ -33,7 +33,7 @@ Files (and what needs to be done to them!)
 - SF2: A couple of instrument files will be provided for playing songs. 
  -- Examples provided, immutable.
 
-###[@Anneris & @David]:
+### [@Anneris & @David]:
 #### Generic CRUD operations will be performed on the database as follows:
 ##### Create a song / chord-progression field in the database
 - via an uploaded MIDI file or a chord-progression JSON input
@@ -51,7 +51,7 @@ Files (and what needs to be done to them!)
 ##### Update all song / chord-progression parameters described above.
 ##### Delete a song / chord-progression field from the database.
 
-###[@Akhil]:
+### [@Akhil]:
 #### Analysis / Other Routes:
 - A plot of the instantaneous emotion vector time series (a matrix) calculated theoretically
 - A plot of the instantaneous emotion vector time series (a matrix) calculated by comparison to known songs
@@ -75,7 +75,10 @@ TBD (at least 2 back-end workers, a Redis worker, and a Flask worker)
 <details>
 <summary>Details (dropdown)</summary>
 
-TBD (plan on using Kroki and Mermaid for the software diagram. Also the theory notes will need to be added in by @Akhil).
+TBD 
+- will use the doc folder markdown & makefile commands to generate README and PDF.
+- plan on using Kroki and Mermaid for the software diagram. 
+- some theory notes on implementation will need to be added in by @Akhil.
 
 </details>
 
