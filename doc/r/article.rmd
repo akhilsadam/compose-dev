@@ -1,13 +1,18 @@
 ---
-title: "positional-iss"
+title: "compose"
 author:
+  - name: Anneris Rodriguez 
+    affiliation: Aerospace Department, University of Texas at Austin
+    email: <annerisrod@utexas.edu>
   - name: Akhil Sadam |  as97822
     affiliation: Aerospace Department, University of Texas at Austin
     email: <akhil.sadam@utexas.edu>
+  - name: David Ventura Diaz
+    affiliation: Aerospace Department, University of Texas at Austin
 date: '`r format(Sys.time(), "%d %B, %Y")`'
-abstract: 'An containerized Flask webserver designed for querying ISS sightings and positions on February 13, 2022. Midterm project for COE332. R is used to produce documentation.'
+abstract: ' '
 # at least one keyword must be supplied
-keywords: [positional-iss, Docker, Flask, Python3, R]
+keywords: [compose, telecommunications, music, theory, Docker, Flask, Python3, R]
 links-to-footnotes: true
 paged-footnotes: true
 nocite: '@*'
@@ -18,7 +23,7 @@ output:
     md_extensions: +raw_html
 link-citations: yes
 # uncomment this line to produce HTML and PDF in RStudio:
-knit: pagedown::chrome_print
+# knit: pagedown::chrome_print
 ---
 
 ```{r setup, include=FALSE}

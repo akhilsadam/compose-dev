@@ -69,7 +69,7 @@ push:
 
 # [WARNING] The following commands may require unlisted dependencies and are not part of the supported API.
 # Notes for developer convenience:
-#	 May need to be done on Windows due to some npm issues.
+#	 May need to be done on superuser Windows due to some R issues.
 #	 Requires R and some packages
 #	 Some paths will need to be modified (currently designed for @akhilsadam to run, but if you would like to do it too, please let me know).
 
@@ -86,7 +86,10 @@ readme:
 	- git push
 
 pdf:
+	"C:\Program Files\R\R-4.0.3\bin\Rscript" -e 'install.packages('"'pagedown'"', repos = '"'http://cran.us.r-project.org'"')' > doc/r/log_r.txt
 	"C:\Program Files\R\R-4.0.3\bin\Rscript" -e 'pagedown::chrome_print('"'doc/r/article.rmd'"')' > doc/r/log_r.txt
+# sudo "/mnt/c/Program Files/R/R-4.0.3/bin/Rscript.exe" -e 'install.packages('"'pagedown'"')' > doc/r/log_r.txt
+# "/mnt/c/Program Files/R/R-4.0.3/bin/Rscript.exe" -e 'pagedown::chrome_print('"'doc/r/article.rmd'"')' > doc/r/log_r.txt
 	mv doc/r/article.pdf app/static/doc/article.pdf
 	mv doc/r/article.html app/static/doc/article.html
 

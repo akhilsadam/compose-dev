@@ -3,7 +3,7 @@
 
 # Files (and what they should do)
 ## api
-- `app/api/` contains all the routes to do everything, separated by different classes. See XXX.py for an example.
+- `app/api/` contains all the routes to do everything, separated by different classes. See `app/api/example.py` for an example.
  - `app/api/register` will generate api and run some basic tests on every route (tests that they do return an output).
  - `app/api/schema` lists possible output types (you can use these names in the route docstrings).
 - `app/core/` contains all the main chord-analysis code, with example data.

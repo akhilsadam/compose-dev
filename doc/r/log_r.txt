@@ -1,0 +1,146 @@
+  |                                                                              |                                                                      |   0%  |                                                                              |...                                                                   |   4%
+   inline R code fragments
+
+  |                                                                              |......                                                                |   9%
+label: setup (with options) 
+List of 1
+ $ include: logi FALSE
+
+  |                                                                              |.........                                                             |  13%
+  ordinary text without R code
+
+  |                                                                              |............                                                          |  17%
+label: unnamed-chunk-1 (with options) 
+List of 1
+ $ child: chr "../motivate.md"
+
+  |                                                                              |                                                                      |   0%  |                                                                              |......................................................................| 100%
+  ordinary text without R code
+
+
+  |                                                                              |...............                                                       |  22%
+  ordinary text without R code
+
+  |                                                                              |..................                                                    |  26%
+label: unnamed-chunk-2 (with options) 
+List of 1
+ $ child: chr "../implement.md"
+
+  |                                                                              |                                                                      |   0%  |                                                                              |......................................................................| 100%
+  ordinary text without R code
+
+
+  |                                                                              |.....................                                                 |  30%
+  ordinary text without R code
+
+  |                                                                              |........................                                              |  35%
+label: unnamed-chunk-3 (with options) 
+List of 1
+ $ child: chr "../input.md"
+
+  |                                                                              |                                                                      |   0%  |                                                                              |......................................................................| 100%
+  ordinary text without R code
+
+
+  |                                                                              |...........................                                           |  39%
+  ordinary text without R code
+
+  |                                                                              |..............................                                        |  43%
+label: unnamed-chunk-4 (with options) 
+List of 1
+ $ child: chr "../inputR.md"
+
+  |                                                                              |                                                                      |   0%  |                                                                              |..................                                                    |  25%
+  ordinary text without R code
+
+  |                                                                              |...................................                                   |  50%
+label: unnamed-chunk-11 (with options) 
+List of 1
+ $ echo: logi FALSE
+
+  |                                                                              |....................................................                  |  75%
+  ordinary text without R code
+
+  |                                                                              |......................................................................| 100%
+label: unnamed-chunk-12 (with options) 
+List of 1
+ $ echo: logi FALSE
+
+
+  |                                                                              |.................................                                     |  48%
+  ordinary text without R code
+
+  |                                                                              |.....................................                                 |  52%
+label: unnamed-chunk-5 (with options) 
+List of 1
+ $ child: chr "../install.md"
+
+  |                                                                              |                                                                      |   0%  |                                                                              |......................................................................| 100%
+  ordinary text without R code
+
+
+  |                                                                              |........................................                              |  57%
+  ordinary text without R code
+
+  |                                                                              |...........................................                           |  61%
+label: unnamed-chunk-6 (with options) 
+List of 1
+ $ child: chr "../installR.md"
+
+  |                                                                              |                                                                      |   0%  |                                                                              |......................................................................| 100%
+  ordinary text without R code
+
+
+  |                                                                              |..............................................                        |  65%
+  ordinary text without R code
+
+  |                                                                              |.................................................                     |  70%
+label: unnamed-chunk-7 (with options) 
+List of 1
+ $ child: chr "../usage.md"
+
+  |                                                                              |                                                                      |   0%  |                                                                              |......................................................................| 100%
+  ordinary text without R code
+
+
+  |                                                                              |....................................................                  |  74%
+  ordinary text without R code
+
+  |                                                                              |.......................................................               |  78%
+label: unnamed-chunk-8 (with options) 
+List of 1
+ $ child: chr "../ethics.md"
+
+  |                                                                              |                                                                      |   0%  |                                                                              |......................................................................| 100%
+  ordinary text without R code
+
+
+  |                                                                              |..........................................................            |  83%
+  ordinary text without R code
+
+  |                                                                              |.............................................................         |  87%
+label: unnamed-chunk-9 (with options) 
+List of 1
+ $ child: chr "../installDetail.md"
+
+  |                                                                              |                                                                      |   0%  |                                                                              |......................................................................| 100%
+  ordinary text without R code
+
+
+  |                                                                              |................................................................      |  91%
+  ordinary text without R code
+
+  |                                                                              |...................................................................   |  96%
+label: unnamed-chunk-10 (with options) 
+List of 1
+ $ child: chr "../api.md"
+
+  |                                                                              |                                                                      |   0%  |                                                                              |......................................................................| 100%
+  ordinary text without R code
+
+
+  |                                                                              |......................................................................| 100%
+  ordinary text without R code
+
+
+"C:/PROGRA~1/Pandoc/pandoc" +RTS -K512m -RTS article.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash+raw_html --output article.html --lua-filter "C:\Users\sadam\R\win-library\4.0\bookdown\rmarkdown\lua\custom-environment.lua" --lua-filter "C:\Users\sadam\R\win-library\4.0\rmarkdown\rmarkdown\lua\pagebreak.lua" --lua-filter "C:\Users\sadam\R\win-library\4.0\rmarkdown\rmarkdown\lua\latex-div.lua" --self-contained --wrap preserve --lua-filter "C:/Users/sadam/R/win-library/4.0/pagedown/resources/lua/uri-to-fn.lua" --lua-filter "C:/Users/sadam/R/win-library/4.0/pagedown/resources/lua/loft.lua" --lua-filter "C:/Users/sadam/R/win-library/4.0/pagedown/resources/lua/footnotes.lua" --csl "C:/Users/sadam/R/win-library/4.0/pagedown/resources/csl/journal-of-statistical-software.csl" --lua-filter "C:/Users/sadam/R/win-library/4.0/pagedown/resources/lua/jss.lua" --metadata link-citations=true --mathjax "--mathjax=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" --metadata newpage_html_class="page-break-after" --standalone --section-divs --template "C:\Users\sadam\R\win-library\4.0\pagedown\resources\html\jss_paged.html" --no-highlight --include-in-header "C:\Users\sadam\AppData\Local\Temp\RtmpGaRB37\rmarkdown-str85544150b181a.html" 

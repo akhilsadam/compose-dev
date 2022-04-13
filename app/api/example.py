@@ -32,18 +32,18 @@ def data_out():
         Returns:
             list: a list of dictionaries contain ML data.
     """
-    if data.loaded == False:
-        data.data_in()
+    if example.loaded == False:
+        example.data_in()
     rd = redis_client()
     return [rd.hgetall(key) for key in rd.keys()]
 
 # IMPORTANT: make sure to name the class you use the same as the filename!
 # IMPORTANT: any non-route methods should not be in the class!
-class data(MethodResource):
+class example(MethodResource):
 
     loaded = False      
 
-    @app.route("/data", methods=['POST'])
+    @app.route("/example", methods=['POST'])
     def data_in():
         """Get Meteorite Landing observations from website to Redis.
         ---
@@ -61,13 +61,13 @@ class data(MethodResource):
             rd = redis_client()
             for i in range(len(dt)):
                 rd.hset(i,mapping=dt[i])
-            data.loaded = True
+            example.loaded = True
         except Exception as E:
             logger.critical(E)
         else:
             return "Successful Load!"
 
-    @app.route("/data", methods=['GET'])
+    @app.route("/example", methods=['GET'])
     def data_io():
         """ Meteorite Landing observations
         ---
