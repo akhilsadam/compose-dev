@@ -60,18 +60,22 @@ Note we use a git submodule to copy over files from the `compose-wa` repository 
 
 ### [@Akhil]:
 #### A Redis database will be used to store the following data: (example objects can be found in `\app\core\midi`, `\app\core\chord-progressions`, `\app\core\sf2\`)
-##### Immutable data packaged with the application (will be in `db=0`):
+##### Immutable data packaged with the application (will be in `db=2`):
 - Array: a table of chords, each with their corresponding emotion vector.
 - Array: a (matrix) table of chord-modulations, each with their resulting emotion vector.
 - Floats: a set of parameters describing the relation between the resultant emotional value and the individual chord / chord-modulations. (Any necessary parameters for the theoretical model will be stored here.)
-##### Fields  (can have multiple items) (will be in `db=1`):
+##### Fields  (can have multiple items) (will be in `db=3,4`):
 - Song Object
+ (note both items will be created together!)
  - MusicPy: A song object stored in the default musicpy object via pickling.
   - Examples provided, CRUD amenable.
+  - a MP-based object will not create a chord progression, but a chord progression will create an MP object!
  - Chord Progression: A chord progression stored as a list of dictionaries, with chord names and lengths.
   - Examples provided, CRUD amenable.
+###### `db=5`
 - Emotion Object : An emotion object storing the overall emotion vector, as well as the emotion vector time-series (matrix).
-- Examples provided (will be automatically generated), CRUD amenable.
+ - Examples provided (will be automatically generated), CRUD amenable.
+###### `db=6`
 - SF2: A couple of instrument files will be provided for playing songs. 
  - Examples provided, immutable.
 
@@ -94,7 +98,7 @@ Note we use a git submodule to copy over files from the `compose-wa` repository 
 ##### Delete a song / chord-progression field from the database.
 
 ### [@Akhil]:
-#### Analysis / Other Routes (output will be in `db=2`):
+#### Analysis / Other Routes (output will be in `db>=7`):
 - A plot of the instantaneous emotion vector time series (a matrix) calculated theoretically
 - A plot of the instantaneous emotion vector time series (a matrix) calculated by comparison to known songs
 - A plot of related songs on emotion-based axes using a theoretical transformation.
@@ -108,9 +112,10 @@ Note we use a git submodule to copy over files from the `compose-wa` repository 
 <details>
 <summary>Details (dropdown)</summary>
 
-TBD
+Partially in progress [@Akhil]
  - at least 2 back-end workers, a Redis worker, and a Flask worker
- - the queue will be on database `db=3`
+ - the queue will be on database `db=0`
+ - the jobs will be stored on database `db=1`
 
 </details>
 

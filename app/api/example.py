@@ -14,17 +14,7 @@ logger = logging.getLogger('root')
 from app.options import options
 from app.api.schema import *
 
-import redis
-
-def redis_client():
-    """Get Redis Client.
-
-    Returns:
-        object: redis server object.
-    """
-    print(f"REDIS host IP: {options.redhost}")
-    return redis.Redis(host=options.redhost, port=options.redport, db=0, charset="utf-8", decode_responses=True)
-
+from app.redisclient import redis_client
 mainkey='meteorite_landings'
 
 def data_out():
@@ -34,7 +24,7 @@ def data_out():
     """
     if example.loaded == False:
         example.data_in()
-    rd = redis_client()
+    rd = redis_client(15)
     return [rd.hgetall(key) for key in rd.keys()]
 
 # IMPORTANT: make sure to name the class you use the same as the filename!
@@ -58,7 +48,7 @@ class example(MethodResource):
         try:
             dt = js.loads(rqs.get("https://raw.githubusercontent.com/wjallen/coe332-sample-data/main/ML_Data_Sample.json")
                 .content.decode('utf-8'))[mainkey]
-            rd = redis_client()
+            rd = redis_client(15)
             for i in range(len(dt)):
                 rd.hset(i,mapping=dt[i])
             example.loaded = True

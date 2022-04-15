@@ -36,8 +36,15 @@ clean:
 	- docker rm data-redis
 	- docker rm ${PACKAGE}
 	- rm __pycache__/ -r
+	- rm app/__pycache__/ -r
+	- rm app/api/__pycache__/ -r
+	- rm app/core/__pycache__/ -r
+	- rm app/quarry/__pycache__/ -r
+	- rm app/queue/__pycache__/ -r
+	- rm app/shaft/__pycache__/ -r
 	- rm app/.pytest_cache/ -r
 	- rm doc/r/log_r.txt
+	- rm redis-data/dump.rdb
 
 build:
 	docker build -t ${NAME}/${PACKAGE}:${TAG} .
