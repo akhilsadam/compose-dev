@@ -15,4 +15,8 @@ class initialize:
             if '.ipynb' not in midi:
                 mp,_ = element.load(f'app/core/midi/{midi}')
                 fields.create_piece(mp)
+                nm = midi.split('.')[0]
+                os.system(f"touch app/static/audio/{nm}.mp3")
+                os.system(f"chmod ugo+rwx app/static/audio/{nm}.mp3")
+                element.mp3(mp,f"app/static/audio/{nm}")
             

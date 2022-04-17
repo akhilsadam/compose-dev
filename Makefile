@@ -118,3 +118,10 @@ doc:
 	make api
 	make pdf
 	make readme
+
+purge:
+# run on windows Powershell
+	- docker system prune
+	- net stop com.docker.service
+	- wsl --shutdown
+	"Optimize-VHD -Path C:\Users\sadam\AppData\Local\Docker\wsl\data\ext4.vhdx -Mode Full"

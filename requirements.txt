@@ -23,3 +23,5 @@ pretty_midi
 libfmp
 nltk
 pygame
+pydub
+sf2_loader

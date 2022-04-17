@@ -1,0 +1,3 @@
+# Resources Folder...
+
+- the audio needs to be exported first here so that we can then play them via HTML (no other way right now).

@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify, render_template
 from app.redisclient import redis_client, redis_client_raw
 
 import logging
@@ -32,8 +32,15 @@ def get_pieces():
     logger.info(out)
     return out
 
+# def play_piece(key=0):
+#     out = redis_get_raw(4)[key]
+#     obj = pickle.loads(out)
+#     pygame.mixer.init(44100, -16,2,2048)
+#     mp.play(obj)
+
 def play_piece(key=0):
-    out = redis_get_raw(4)[key]
-    obj = pickle.loads(out)
-    pygame.mixer.init(44100, -16,2,2048)
-    mp.play(obj)
+    name = redis_client(3).hget(key,'name').replace(" ","")
+    return render_template(
+        "audio.jinja2",
+        piece=f"\'/static/audio/{name}.mp3\'"
+    )

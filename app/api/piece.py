@@ -132,12 +132,12 @@ class piece(MethodResource):
         """
         route = f'/piece/{songid}'
         try:
-            access.play_piece(songid)
+            output = access.play_piece(songid)
         except Exception as E: 
             msg = "Invalid SongID parameter. Please input an integer in range."
             logger.error(f'{route}:{msg} had exception {E}')
             return msg
         # logger.info(f"GET : {route}")
     
-        return "Success!"
+        return output
         
