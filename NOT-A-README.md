@@ -49,8 +49,6 @@
 TBW (to be written)
 ```
 
-Note we use a git submodule to copy over files from the `compose-wa` repository into the app/core folder (there should be no additional work necessary on your end when you do a `git pull`).
-
 # LIST OF TASKS:
 
 ## Current REST API / CRUD (with current assignees):
