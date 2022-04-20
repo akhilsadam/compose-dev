@@ -13,7 +13,7 @@ def redis_client(dbi):
     Returns:
         object: redis server object.
     """
-    print(f"REDIS host IP: {options.redhost}")
+    # print(f"REDIS host IP: {options.redhost}")
     # logger.info(dbi)
     return redis.Redis(host=options.redhost, port=options.redport, db=dbi, charset="utf-8", decode_responses=True)
 def redis_client_raw(dbi):
@@ -23,6 +23,6 @@ def redis_client_raw(dbi):
     Returns:
         object: redis server object.
     """
-    print(f"REDIS host IP: {options.redhost}")
+    # print(f"REDIS host IP: {options.redhost}")
     # logger.info(dbi)
     return redis.Redis(host=options.redhost, port=options.redport, db=dbi, charset="utf-8", decode_responses=False)

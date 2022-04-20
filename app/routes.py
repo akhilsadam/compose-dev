@@ -136,13 +136,13 @@ for file in os.listdir('app/api/'):
     # exec(f'app.register_blueprint({page})')
 
 #------------------------------------------------------ 
-from app.queue.worker import worker
-import threading
-# make 2 new workers and start them
-def work():
-  worker().execute_job()
-for _ in range(2):
-  threading.Thread(target=work, args=(), kwargs={}).start()
+# from app.queue.worker import worker
+# import threading
+# # make 2 new workers and start them
+# def work():
+#   worker().execute_job()
+# for _ in range(2):
+#   threading.Thread(target=work, args=(), kwargs={}).start()
 
 #------------------------------------------------------ 
 from app.api.piece import piece

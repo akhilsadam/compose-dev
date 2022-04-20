@@ -2,15 +2,7 @@
 
 from datetime import datetime
 import uuid
-from flask import Blueprint, jsonify, render_template
-from flask import current_app as app
-from flask import request as rq
-import requests as rqs
 import json as js
-
-from flask_apispec import MethodResource, use_kwargs, marshal_with
-from marshmallow import Schema
-from webargs import fields
 
 import logging
 logger = logging.getLogger('root')

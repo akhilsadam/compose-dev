@@ -1,17 +1,12 @@
 NAME=akhilsadam
 PACKAGE=compose
+WORKER=compose-worker
 GITHUB=git@github.com:akhilsadam/compose-dev.git
 TAG=0.0.2
 PYTEST=testall.py
 APIFILE=doc/api.md
 SEARCH=\\n
 REPLACE=\n
-
-# cheap versions that do not rebuild the complete image (dirty stands for an 'unclean' build)
-
-rapid: kill clean dirtyrun
-
-rapidtest: kill clean dirtytest
 
 # a full rebuild (we need so many variants due to the redis-url finding bash code..this can be optimized later)
 
@@ -23,18 +18,27 @@ iterate: kill clean build testrun
 
 ###############
 
+# kubernetes: 
+# make all docker containers and push
+
+###############
+
 images:
 	docker images | grep ${PACKAGE}
+	docker images | grep ${WORKER}
 
 ps:
 	docker ps -a | grep ${PACKAGE}
+	docker ps -a | grep ${WORKER}
 
 kill:
 	- docker stop data-redis
 	- docker stop ${PACKAGE}
+	- docker stop ${WORKER}
 clean:
 	- docker rm data-redis
 	- docker rm ${PACKAGE}
+	- docker rm ${WORKER}
 	- rm __pycache__/ -r
 	- rm app/__pycache__/ -r
 	- rm app/api/__pycache__/ -r
@@ -47,31 +51,25 @@ clean:
 	- rm redis-data/dump.rdb
 
 build:
-	docker build -t ${NAME}/${PACKAGE}:${TAG} .
-
-dirtytest:
-# only test (without rebuild)
-	sh scripts/dirtytest.sh ${NAME} ${PACKAGE} ${TAG}
-
-dirtyrun:
-# only run (without rebuild)
-	sh scripts/dirtyrun.sh ${NAME} ${PACKAGE} ${TAG}
+	docker build -t ${NAME}/${PACKAGE}:${TAG} -f docker/flask/Dockerfile .
+	docker build -t ${NAME}/${WORKER}:${TAG} -f docker/worker/Dockerfile .
 
 test:
 # only test
-	sh scripts/test.sh ${NAME} ${PACKAGE} ${TAG}
+	sh scripts/test.sh ${NAME} ${PACKAGE} ${TAG} ${WORKER}
 
 run:
 # only run
-	sh scripts/run.sh ${NAME} ${PACKAGE} ${TAG}
+	sh scripts/run.sh ${NAME} ${PACKAGE} ${TAG} ${WORKER}
 
 testrun:
 # test and run
-	sh scripts/run.sh ${NAME} ${PACKAGE} ${TAG}
+	sh scripts/testrun.sh ${NAME} ${PACKAGE} ${TAG} ${WORKER}
 
 push:
 	docker login docker.io
 	docker push ${NAME}/${PACKAGE}:${TAG}
+	docker push ${NAME}/${WORKER}:${TAG}
 
 
 # [WARNING] The following commands may require unlisted dependencies and are not part of the supported API.

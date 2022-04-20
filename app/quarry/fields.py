@@ -33,11 +33,13 @@ def create_piece(obj,chd='-'):
     rd.hset(n_keys,mapping=maps)
     rdr.set(n_keys, pickle.dumps(obj)) # musicpy object
     
-def read_song_info(id,key):
+def read_song_info(id,key) -> str:
     """Get queryable sub-fields for a piece/song object.
     Args:
         id (int): id of piece object
-        key (str): mame of sub-field
+        key (str): name of sub-field
+    Returns:
+        (str): sub-field value or N/A if not available.
     """
     rd = redis_client_raw(3)
     if id in rd.keys():
@@ -45,4 +47,12 @@ def read_song_info(id,key):
         if key in e:
             return e[key]
     return "N/A"
+
+def n_songs() -> int:
+    """Get number of piece/song objects in Redis.
+    Returns:
+        (int): number of piece/song objects in Redis.
+    """
+    rd = redis_client_raw(3)
+    return len(rd.keys())
 
