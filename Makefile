@@ -19,8 +19,30 @@ iterate: kill clean build testrun
 ###############
 
 # kubernetes: 
-# make all docker containers and push
+cubedeploy:
+	cp deployment/template/deployment-flask.yml deployment/deployment-flask.yml
+	cp deployment/template/deployment-worker.yml deployment/deployment-worker.yml
+	kubectl apply -f deployment/template/service-flask.yml
+	kubectl apply -f deployment/template/service-redis.yml
+	kubectl apply -f deployment/template/service-worker.yml
+	bash scripts/repl.sh
+	kubectl apply -f deployment/template/data-redis-volume.yml
+	kubectl apply -f deployment/template/data-flask-volume.yml
+	kubectl apply -f deployment/template/deployment-redis.yml
+	kubectl apply -f deployment/deployment-worker.yml
+	kubectl apply -f deployment/deployment-flask.yml
 
+cubeclean:
+	- kubectl delete deployment compose-flask
+	- kubectl delete deployment compose-worker
+	- kubectl delete deployment compose-redis
+	- kubectl delete pvc compose-data-redis-volume
+	- kubectl delete pvc compose-data-flask-volume
+	- kubectl delete services compose-flask-service
+	- kubectl delete services compose-worker-service
+	- kubectl delete services compose-redis-service
+
+cubeiterate: cubeclean cubedeploy
 ###############
 
 images:
@@ -35,10 +57,12 @@ kill:
 	- docker stop data-redis
 	- docker stop ${PACKAGE}
 	- docker stop ${WORKER}
+	- docker stop ${PACKAGE}-test
 clean:
 	- docker rm data-redis
 	- docker rm ${PACKAGE}
 	- docker rm ${WORKER}
+	- docker rm ${PACKAGE}-test
 	- rm __pycache__/ -r
 	- rm app/__pycache__/ -r
 	- rm app/api/__pycache__/ -r
@@ -116,6 +140,10 @@ doc:
 	make api
 	make pdf
 	make readme
+
+mildpurge: 
+	docker rm `docker ps -qa`
+	docker rmi `docker images -q`
 
 purge:
 # run on windows Powershell

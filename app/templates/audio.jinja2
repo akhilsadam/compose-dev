@@ -14,21 +14,419 @@
   <meta name="HandheldFriendly" content="True" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   {% include 'analyticsHEAD.jinja2' %}
-    <script type="text/javascript">
+    <script type="module">
+    import lottieWeb from 'https://cdn.skypack.dev/lottie-web';
+
+class AudioPlayer extends HTMLElement {
+    constructor() {
+        super();
+        const template = document.querySelector('template');
+        const templateContent = template.content;
+        const shadow = this.attachShadow({mode: 'open'});
+        shadow.appendChild(templateContent.cloneNode(true));
+    }
+
+    connectedCallback() {
+        everything(this);
+    }
+}
+
+const everything = function(element) {  
+  const shadow = element.shadowRoot;
+
+    const audioPlayerContainer = shadow.getElementById('audio-player-container');
+    const playIconContainer = shadow.getElementById('play-icon');
+    const seekSlider = shadow.getElementById('seek-slider');
+    const volumeSlider = shadow.getElementById('volume-slider');
+    const muteIconContainer = shadow.getElementById('mute-icon');
+    const audio = shadow.querySelector('audio');
+    const durationContainer = shadow.getElementById('duration');
+    const currentTimeContainer = shadow.getElementById('current-time');
+    const outputContainer = shadow.getElementById('volume-output');
+    let playState = 'play';
+    let muteState = 'unmute';
+    let raf = null;
+
+    audio.src = element.getAttribute('data-src');
+
+    const playAnimation = lottieWeb.loadAnimation({
+        container: playIconContainer,
+        path: 'https://maxst.icons8.com/vue-static/landings/animated-icons/icons/pause/pause.json',
+        renderer: 'svg',
+        loop: false,
+        autoplay: false,
+        name: "Play Animation",
+    });
+          
+    const muteAnimation = lottieWeb.loadAnimation({
+        container: muteIconContainer,
+        path: 'https://maxst.icons8.com/vue-static/landings/animated-icons/icons/mute/mute.json',
+        renderer: 'svg',
+        loop: false,
+        autoplay: false,
+        name: "Mute Animation",
+    });
+          
+    playAnimation.goToAndStop(14, true);
+
+    const whilePlaying = () => {
+        seekSlider.value = Math.floor(audio.currentTime);
+        currentTimeContainer.textContent = calculateTime(seekSlider.value);
+        audioPlayerContainer.style.setProperty('--seek-before-width', `${seekSlider.value / seekSlider.max * 100}%`);
+        raf = requestAnimationFrame(whilePlaying);
+    }
+
+    const showRangeProgress = (rangeInput) => {
+        if(rangeInput === seekSlider) audioPlayerContainer.style.setProperty('--seek-before-width', rangeInput.value / rangeInput.max * 100 + '%');
+        else audioPlayerContainer.style.setProperty('--volume-before-width', rangeInput.value / rangeInput.max * 100 + '%');
+    }
+
+    const calculateTime = (secs) => {
+        const minutes = Math.floor(secs / 60);
+        const seconds = Math.floor(secs % 60);
+        const returnedSeconds = seconds < 10 ? `0${seconds}` : `${seconds}`;
+        return `${minutes}:${returnedSeconds}`;
+    }
+        
+    const displayDuration = () => {
+        durationContainer.textContent = calculateTime(audio.duration);
+    }
+        
+    const setSliderMax = () => {
+        seekSlider.max = Math.floor(audio.duration);
+    }
+        
+    const displayBufferedAmount = () => {
+        const bufferedAmount = Math.floor(audio.buffered.end(audio.buffered.length - 1));
+        audioPlayerContainer.style.setProperty('--buffered-width', `${(bufferedAmount / seekSlider.max) * 100}%`);
+    }
+
+    if (audio.readyState > 0) {
+        displayDuration();
+        setSliderMax();
+        displayBufferedAmount();
+    } else {
+        audio.addEventListener('loadedmetadata', () => {
+            displayDuration();
+            setSliderMax();
+            displayBufferedAmount();
+        });
+    }
+
+    playIconContainer.addEventListener('click', () => {
+        if(playState === 'play') {
+            audio.play();
+            playAnimation.playSegments([14, 27], true);
+            requestAnimationFrame(whilePlaying);
+            playState = 'pause';
+        } else {
+            audio.pause();
+            playAnimation.playSegments([0, 14], true);
+            cancelAnimationFrame(raf);
+            playState = 'play';
+        }
+    });
+        
+    muteIconContainer.addEventListener('click', () => {
+        if(muteState === 'unmute') {
+            muteAnimation.playSegments([0, 15], true);
+            audio.muted = true;
+            muteState = 'mute';
+        } else {
+            muteAnimation.playSegments([15, 25], true);
+            audio.muted = false;
+            muteState = 'unmute';
+        }
+    });
+
+    audio.addEventListener('progress', displayBufferedAmount);
+
+    seekSlider.addEventListener('input', (e) => {
+        showRangeProgress(e.target);
+        currentTimeContainer.textContent = calculateTime(seekSlider.value);
+        if(!audio.paused) {
+            cancelAnimationFrame(raf);
+        }
+    });
+
+    seekSlider.addEventListener('change', () => {
+        audio.currentTime = seekSlider.value;
+        if(!audio.paused) {
+            requestAnimationFrame(whilePlaying);
+        }
+    });
+
+    volumeSlider.addEventListener('input', (e) => {
+        const value = e.target.value;
+        showRangeProgress(e.target);
+        outputContainer.textContent = value;
+        audio.volume = value / 100;
+    });
+
+    if('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: {{piece}},
+            artist: 'compose-dev',
+            album: 'compose-midi',
+            artwork: [
+                { src: 'https://avatars.githubusercontent.com/u/41082288?v=4', sizes: '96x96', type: 'image/png' },
+            ]
+        });
+        navigator.mediaSession.setActionHandler('play', () => {
+            if(playState === 'play') {
+                audio.play();
+                playAnimation.playSegments([14, 27], true);
+                requestAnimationFrame(whilePlaying);
+                playState = 'pause';
+            } else {
+                audio.pause();
+                playAnimation.playSegments([0, 14], true);
+                cancelAnimationFrame(raf);
+                playState = 'play';
+            }
+        });
+        navigator.mediaSession.setActionHandler('pause', () => {
+            if(playState === 'play') {
+                audio.play();
+                playAnimation.playSegments([14, 27], true);
+                requestAnimationFrame(whilePlaying);
+                playState = 'pause';
+            } else {
+                audio.pause();
+                playAnimation.playSegments([0, 14], true);
+                cancelAnimationFrame(raf);
+                playState = 'play';
+            }
+        });
+        navigator.mediaSession.setActionHandler('seekbackward', (details) => {
+            audio.currentTime = audio.currentTime - (details.seekOffset || 10);
+        });
+        navigator.mediaSession.setActionHandler('seekforward', (details) => {
+            audio.currentTime = audio.currentTime + (details.seekOffset || 10);
+        });
+        navigator.mediaSession.setActionHandler('seekto', (details) => {
+            if (details.fastSeek && 'fastSeek' in audio) {
+              audio.fastSeek(details.seekTime);
+              return;
+            }
+            audio.currentTime = details.seekTime;
+        });
+        navigator.mediaSession.setActionHandler('stop', () => {
+            audio.currentTime = 0;
+            seekSlider.value = 0;
+            audioPlayerContainer.style.setProperty('--seek-before-width', '0%');
+            currentTimeContainer.textContent = '0:00';
+            if(playState === 'pause') {
+                playAnimation.playSegments([0, 14], true);
+                cancelAnimationFrame(raf);
+                playState = 'play';
+            }
+        });
+    }
+}
+
+customElements.define('audio-player', AudioPlayer);
+
         var audio = new Audio({{piece}});
         audio.play();
         function playAudio() {
             audio.play();
         }
         function pauseAudio() {
-            x.pause();
+            audio.pause();
         }
     </script>
 </head>
 
 <body class="audio" style="margin: 0; height: 100%;">
-    <button onclick="playAudio()">Play Audio</button>
-    <button onclick="pauseAudio()">pause Audio</button>
+<template>
+        <style>
+            button {
+                padding: 0;
+                border: 0;
+                background: transparent;
+                cursor: pointer;
+                outline: none;
+                width: 40px;
+                height: 40px;
+            }
+            #audio-player-container {
+                position: relative;
+                width: 100%;
+                height: 4em;
+                font-family: var(--kotoba);
+                --seek-before-width: 0%;
+                --volume-before-width: 100%;
+                --buffered-width: 0%;
+                letter-spacing: -0.5px;
+            }
+            p {
+                position: absolute;
+                top: -18px;
+                right: 5%;
+                padding: 0 5px;
+                margin: 10px 0 10px 0;
+                font-size: 28px;
+                background: transparent;
+            }
+            #play-icon {
+            }
+            path {
+                stroke: var(--rurikon);
+            }
+            .time {
+                display: inline-block;
+                width: 37px;
+                text-align: center;
+                font-size: 20px;
+            }
+            output {
+                display: inline-block;
+                width: 32px;
+                text-align: center;
+                font-size: 20px;
+                clear: left;
+            }
+            #volume-slider {
+                width: 10%;
+                background: var(--hakusai);
+            }
+            #volume-slider::-webkit-slider-runnable-track {
+                background: rgba(0, 125, 181, 0.6);
+            }
+            #volume-slider::-moz-range-track {
+                background: rgba(0, 125, 181, 0.6);
+            }
+            #volume-slider::-ms-fill-upper {
+                background: rgba(0, 125, 181, 0.6);
+            }
+            #volume-slider::before {
+                width: var(--volume-before-width);
+            }
+            #mute-icon {
+            }
+            input[type="range"] {
+                position: relative;
+                -webkit-appearance: none;
+                width: 48%;
+                margin: 0;
+                padding: 0;
+                height: 19px;
+                outline: none;
+                background: var(--hakusai);
+            }
+            input[type="range"]::-webkit-slider-runnable-track {
+                width: 100%;
+                height: 3px;
+                cursor: pointer;
+                background: linear-gradient(to right, var(--sora-iro) var(--buffered-width), var(--aijiro) var(--buffered-width));
+            }
+            input[type="range"]::before {
+                position: absolute;
+                content: "";
+                left: 0;
+                width: var(--seek-before-width);
+                height: 3px;
+                top: 8.5px;
+                background-color: var(--rurikon);
+                cursor: pointer;
+            }
+            input[type="range"]::-webkit-slider-thumb {
+                position: relative;
+                -webkit-appearance: none;
+                box-sizing: content-box;
+                border: 1px solid var(--rurikon);
+                height: 14px;
+                width: 14px;
+                top: -6.5px;
+                border-radius: 20%;
+                transform: rotate(45deg)  scale(0.75);
+                background-color: white;
+                cursor: pointer;
+            }
+            input[type="range"]:active::-webkit-slider-thumb {
+                transform: scale(1.2);
+                background: var(--rurikon);
+            }
+            input[type="range"]::-moz-range-track {
+                width: 100%;
+                height: 3px;
+                cursor: pointer;
+                background: linear-gradient(to right, var(--sora-iro) var(--buffered-width), var(--aijiro) var(--buffered-width));
+            }
+            input[type="range"]::-moz-range-progress {
+                background-color: var(--rurikon);
+            }
+            input[type="range"]::-moz-focus-outer {
+                border: 0;
+            }
+            input[type="range"]::-moz-range-thumb {
+                box-sizing: content-box;
+                border: 1px solid var(--rurikon);
+                height: 14px;
+                width: 14px;
+                top: -6.5px;
+                border-radius: 20%;
+                transform: rotate(45deg)  scale(0.75);
+                background-color: white;
+                cursor: pointer;
+            }
+            input[type="range"]:active::-moz-range-thumb {
+                transform: scale(1.2);
+                background: var(--rurikon);
+            }
+            input[type="range"]::-ms-track {
+                width: 100%;
+                height: 3px;
+                cursor: pointer;
+                background: var(--hakusai);
+                border: solid transparent;
+                color: transparent;
+            }
+            input[type="range"]::-ms-fill-lower {
+                background-color: var(--rurikon);
+            }
+            input[type="range"]::-ms-fill-upper {
+                background: linear-gradient(to right, var(--sora-iro) var(--buffered-width), var(--aijiro) var(--buffered-width));
+            }
+            input[type="range"]::-ms-thumb {
+                box-sizing: content-box;
+                border: 1px solid var(--rurikon);
+                height: 14px;
+                width: 14px;
+                top: -6.5px;
+                border-radius: 20%;
+                transform: rotate(45deg) scale(0.75);
+                background-color: white;
+                cursor: pointer;
+            }
+            input[type="range"]:active::-ms-thumb {
+                transform: scale(1.2);
+                background: var(--rurikon);
+            }
+        </style>
+        <div id="audio-player-container">
+            <audio src="" preload="metadata" autoplay="" loop></audio>
+            <p>
+                {{piece2}} | compose-midi
+            </p>
+            </br>
+            <div style="width: 100%; height: 20px;"></div>
+            <div style="background: linear-gradient(to left, var(--rurikon), var(--murasaki)); width: calc(100% - 60px); height: 1.5px; margin: 0 30px 0 30px;"></div>
+            <div style="display: flex; justify-content: space-evenly; align-items: center;">
+                <button id="play-icon"></button>
+                <span id="current-time" class="time">0:00</span>
+                <input type="range" id="seek-slider" max="100" value="0">
+                <span id="duration" class="time">0:00</span>            
+                <output id="volume-output">100</output>
+                <input type="range" id="volume-slider" max="100" value="100">
+                <button id="mute-icon"></button>
+            </div>
+            <div style="background: linear-gradient(to left, var(--rurikon), var(--murasaki)); width: calc(100% - 60px); height: 1.5px; margin: 0 30px 0 30px;"></div>
+        </div>
+    </template>
+    </br>
+    <audio-player data-src={{piece}}></audio-player>
 </body>
 
 </html>

@@ -16,11 +16,11 @@ class initialize:
         for midi in os.listdir("app/core/midi"):
             if '.ipynb' not in midi:
                 logger.info(f'initalize midi : {midi}')                
-                
+
                 # need to add check that item is not in database
 
                 mp,_ = element.load(f'app/core/midi/{midi}')
-                nm = str(mp[0]).split('\n')[0][7:]
+                nm = str(mp[0]).split('\n')[0][8:]
                 fields.create_piece(mp)
                 os.system(f"touch app/static/audio/{nm}.mp3")
                 os.system(f"chmod ugo+rwx app/static/audio/{nm}.mp3")

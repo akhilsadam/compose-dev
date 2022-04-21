@@ -1,0 +1,34 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: compose-redis
+  labels:
+    app: compose-redis
+    env: test
+    username: astacc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: compose-redis
+  template:
+    metadata:
+      labels:
+        app: compose-redis
+        env: test
+        username: astacc
+    spec:
+      containers:
+        - name: data-redis
+          image: redis:6
+          ports:
+          - name: http
+            containerPort: 6379
+          volumeMounts:
+            - name: data-redis-volume-as-tacc
+              mountPath: "/data"
+      volumes:
+        - name: data-redis-volume-as-tacc
+          persistentVolumeClaim:
+            claimName: data-redis-volume-as-tacc

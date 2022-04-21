@@ -19,7 +19,7 @@ def create_piece(obj,chd='-'):
     n_keys = len(rd.keys())
 
     # fill this in with the rest!
-    name = str(obj[0]).split('\n')[0][7:]
+    name = str(obj[0]).split('\n')[0][8:]
     logger.info(name)
 
     maps = {

@@ -38,9 +38,13 @@ def get_pieces():
 #     pygame.mixer.init(44100, -16,2,2048)
 #     mp.play(obj)
 
+def n_piece():
+    return len(redis_client(3).keys())
+    
 def play_piece(key=0):
     name = redis_client(3).hget(key,'name').replace(" ","")
     return render_template(
         "audio.jinja2",
-        piece=f"\'/static/audio/{name}.mp3\'"
+        piece=f"\'/static/audio/{name}.mp3\'",
+        piece2=name
     )

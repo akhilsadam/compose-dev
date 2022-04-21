@@ -134,7 +134,10 @@ class piece(MethodResource):
         try:
             output = access.play_piece(songid)
         except Exception as E: 
-            msg = "Invalid SongID parameter. Please input an integer in range."
+            if songid < access.n_piece():
+                msg = "Valid SongID: still processing piece. Please check back later."
+            else:
+                msg = "Invalid SongID: no such piece available yet. Please input an integer in range."
             logger.error(f'{route}:{msg} had exception {E}')
             return msg
         # logger.info(f"GET : {route}")
