@@ -13,7 +13,7 @@ import logging
 logger = logging.getLogger('root')
 
 from app.options import options
-from app.api.schema import *
+from app.schema import *
 
 from app.queue.jobs import jobs
 from app.shaft import access

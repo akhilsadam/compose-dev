@@ -1,4 +1,5 @@
-NAME=akhilsadam
+NAME?=akhilsadam
+TACC?=as_tacc
 PACKAGE=compose
 WORKER=compose-worker
 GITHUB=git@github.com:akhilsadam/compose-dev.git
@@ -18,19 +19,39 @@ iterate: kill clean build testrun
 
 ###############
 
-# kubernetes: 
+# kubernetes:
+cubecp:
+	cp deployment/template/*.yml deployment/
+	bash scripts/repl-user.sh
+
+cubereplT:
+	bash scripts/repl-deploy.sh ${USERNAME} ${ID} test
+
+cuberepl:
+	bash scripts/repl-deploy.sh ${USERNAME} ${ID} deploy
+
 cubedeploy:
-	cp deployment/template/deployment-flask.yml deployment/deployment-flask.yml
-	cp deployment/template/deployment-worker.yml deployment/deployment-worker.yml
-	kubectl apply -f deployment/template/service-flask.yml
-	kubectl apply -f deployment/template/service-redis.yml
-	kubectl apply -f deployment/template/service-worker.yml
 	bash scripts/repl.sh
-	kubectl apply -f deployment/template/data-redis-volume.yml
-	kubectl apply -f deployment/template/data-flask-volume.yml
-	kubectl apply -f deployment/template/deployment-redis.yml
+	kubectl apply -f deployment/service-flask.yml
+	kubectl apply -f deployment/service-redis.yml
+	kubectl apply -f deployment/service-worker.yml
+	kubectl apply -f deployment/data-redis-volume.yml
+	kubectl apply -f deployment/data-flask-volume.yml
+	kubectl apply -f deployment/deployment-redis.yml
 	kubectl apply -f deployment/deployment-worker.yml
 	kubectl apply -f deployment/deployment-flask.yml
+	kubectl apply -f deployment/service-nodeport.yml
+
+cubecleanT: 
+	- kubectl delete deployment compose-flask-test
+	- kubectl delete deployment compose-worker-test
+	- kubectl delete deployment compose-redis-test
+	- kubectl delete pvc compose-data-redis-volume-test
+	- kubectl delete pvc compose-data-flask-volume-test
+	- kubectl delete services compose-flask-service-test
+	- kubectl delete services compose-worker-service-test
+	- kubectl delete services compose-redis-service-test
+	- kubectl delete services compose-nodeport-service-test
 
 cubeclean:
 	- kubectl delete deployment compose-flask
@@ -41,8 +62,13 @@ cubeclean:
 	- kubectl delete services compose-flask-service
 	- kubectl delete services compose-worker-service
 	- kubectl delete services compose-redis-service
+	- kubectl delete services compose-nodeport-service
 
-cubeiterate: cubeclean cubedeploy
+cubewipe:
+	- rm deployment/*.yml
+
+cubeiterateT: cubecleanT cubecp cubereplT cubedeploy cubewipe # Test
+cubeiterate: cubeclean cubecp cuberepl cubedeploy cubewipe # Deploy
 ###############
 
 images:
@@ -75,8 +101,8 @@ clean:
 	- rm redis-data/dump.rdb
 
 build:
-	docker build -t ${NAME}/${PACKAGE}:${TAG} -f docker/flask/Dockerfile .
-	docker build -t ${NAME}/${WORKER}:${TAG} -f docker/worker/Dockerfile .
+	docker build -t ${NAME}/${PACKAGE}:${TAG} -f docker/Dockerfile.api .
+	docker build -t ${NAME}/${WORKER}:${TAG} -f docker/Dockerfile.wrk .
 
 test:
 # only test
@@ -140,6 +166,9 @@ doc:
 	make api
 	make pdf
 	make readme
+
+cleanport:
+	lsof -i:5026
 
 mildpurge: 
 	docker rm `docker ps -qa`

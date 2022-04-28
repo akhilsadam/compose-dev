@@ -4,7 +4,7 @@ from flask import request as rq
 
 from flask_apispec import use_kwargs, marshal_with
 from flask_apispec.views import MethodResource
-from app.api.schema import * #schema
+from app.schema import * #schema
 
 import logging
 logger = logging.getLogger('root')

@@ -3,7 +3,7 @@ import os
 logger = logging.getLogger('root')
 
 from app.options import options
-from app.api.schema import *
+from app.schema import *
 from app.redisclient import redis_client
 from app.core import element
 from . import fields

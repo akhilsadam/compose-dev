@@ -5,13 +5,13 @@ metadata:
   name: compose-redis-service
   labels:
     app: compose-redis-service
-    env: test
+    env: ENVSTYLE
     username: astacc
 spec:
   type: ClusterIP
   selector:
     app: compose-redis
-    env: test
+    env: ENVSTYLE
     username: astacc
   ports:
   - name: http

@@ -13,7 +13,7 @@ from apispec.ext.marshmallow import MarshmallowPlugin
 from apispec_webframeworks.flask import FlaskPlugin
 from flask_apispec.extension import FlaskApiSpec
 
-from app.api.schema import * #schema
+from app.schema import * #schema
 
 @app.route("/", methods=['GET'])
 def home():

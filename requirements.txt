@@ -16,7 +16,7 @@ jpcm
 pynverse
 colour_science
 pytest
-musicpy
+musicpy==5.14
 scipy
 nrclex
 pretty_midi
