@@ -1,7 +1,7 @@
 #!/bin/bash
 cd ../
 cat ~/portinfo > pi 
-echo $pi
+echo "$pi"
 lines=$(echo "$pi" | tr ":" "\n")
 echo $lines
 # firstString=$(<deployment-flask.yml)
