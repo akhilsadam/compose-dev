@@ -1,5 +1,5 @@
 #!/bin/bash
-cd ../deployment
+cd ../
 cat ~/portinfo > pi 
 lines=$(echo $pi | tr ";" "\n")
 echo ${lines}
