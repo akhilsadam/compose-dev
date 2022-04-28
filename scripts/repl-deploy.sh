@@ -1,6 +1,6 @@
 #!/bin/bash
 cd ../
-cat ~/portinfo > pi 
+pi=`cat ~/portinfo`
 echo "$pi"
 lines=$(echo "$pi" | tr ":" "\n")
 echo $lines
