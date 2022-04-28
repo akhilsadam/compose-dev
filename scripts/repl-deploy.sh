@@ -1,7 +1,8 @@
 #!/bin/bash
 cd ../
 cat ~/portinfo > pi 
-lines=$(echo $pi | tr ":" "\n")
+echo $pi
+lines=$(echo "$pi" | tr ":" "\n")
 echo $lines
 # firstString=$(<deployment-flask.yml)
 # firstStringTwo=$(<deployment-worker.yml)
