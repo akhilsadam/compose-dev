@@ -6,7 +6,7 @@ class options:
     port = 5026
     proxy = ""
     redport = 6379
-    baseurl = f"http://{host}:{port}{proxy}"
+    baseurl = f"http://{host}:{port}/{proxy}"
     mdfile = "app/static/api.md"
     readmelink = "https://github.com/akhilsadam/compose"
     template = "templates/"

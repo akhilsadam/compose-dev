@@ -47,7 +47,7 @@ def play_piece(key=0):
     name = redis_client(3).hget(key,'name').replace(" ","")
     return render_template(
         "audio.jinja2",
-        piece=f"\'/static/audio/{name}.mp3\'",
+        piece=f"\'/{options.proxy}/static/audio/{name}.mp3\'",
         proxy=options.proxy,
         piece2=name
     )

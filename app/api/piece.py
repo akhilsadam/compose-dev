@@ -44,7 +44,7 @@ class piece(MethodResource):
         else:
             return "Submitted Initialization Job."
 
-    @app.route("/piece/<int:songid>", methods=['GET'])
+    @app.route("/piece/<int:songid>/", methods=['GET'])
     def piece_single(songid : int):
         """ Return a piece as JSON
         ---
@@ -65,7 +65,7 @@ class piece(MethodResource):
                 application/json:
                   schema: JSON            
         """
-        route = f'/piece/{songid}'
+        route = f'/piece/{songid}/'
         try:
             out = access.get_pieces()[songid]
         except Exception as E: 
@@ -109,7 +109,7 @@ class piece(MethodResource):
         print(out)
         return jsonify(out)
 
-    @app.route("/play/<int:songid>", methods=['GET'])
+    @app.route("/play/<int:songid>/", methods=['GET'])
     def play(songid : int):
         """ Play a piece
         ---
@@ -130,7 +130,7 @@ class piece(MethodResource):
                 application/json:
                   schema: JSON            
         """
-        route = f'/piece/{songid}'
+        route = f'/piece/{songid}/'
         try:
             output = access.play_piece(songid)
         except Exception as E: 
