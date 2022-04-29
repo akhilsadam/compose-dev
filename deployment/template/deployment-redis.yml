@@ -26,9 +26,9 @@ spec:
           - name: http
             containerPort: 6379
           volumeMounts:
-            - name: data-redis-volume-ENVSTYLE
+            - name: compose-data-redis-volume-ENVSTYLE
               mountPath: "/data"
       volumes:
-        - name: data-redis-volume-ENVSTYLE
+        - name: compose-data-redis-volume-ENVSTYLE
           persistentVolumeClaim:
-            claimName: data-redis-volume-ENVSTYLE
+            claimName: compose-data-redis-volume-ENVSTYLE
