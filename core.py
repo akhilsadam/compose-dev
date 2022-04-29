@@ -8,16 +8,16 @@ import app.options
 ipa = sys.argv[1]
 app.options.options.sethost(ipa)
 
+import logging
+logger = logging.getLogger('root')
 
 # # setup reverse proxy if on kubernetes
 try: proxy = sys.argv[2]
 except:
-    pass
+    logger.info("Proxy not found...")
 else:
+    logger.info(f"Proxy {proxy}")
     app.options.options.setproxy(proxy)
-
-import logging
-logger = logging.getLogger('root')
 
 from app import init_app
 """Application entry point."""
