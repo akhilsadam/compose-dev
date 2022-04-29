@@ -5,8 +5,8 @@ from flask import render_template
 
 from app.options import options
 
-import app.log as log
-logger = log.init_logger('root')
+import logging
+logger = logging.getLogger('root')
 
 from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin

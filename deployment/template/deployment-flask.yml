@@ -8,7 +8,7 @@ metadata:
     env: ENVSTYLE
     username: USERNAME
 spec:
-  replicas: 2
+  replicas: APIREP
   selector:
     matchLabels:
       app: compose-flask-ENVSTYLE

@@ -33,6 +33,8 @@ do
         firstString=$(echo "${firstString//NODEPORT/$np}")
         firstString=$(echo "${firstString//ENVSTYLE/$env}")
         firstString=$(echo "${firstString//PROXY/$proxy}")
+        firstString=$(echo "${firstString//APIREP/$5}")
+        firstString=$(echo "${firstString//WRKREP/$6}")
         echo "${firstString//USERNAME/"$1"}" > $f
     fi
 done

@@ -8,7 +8,7 @@ metadata:
     env: ENVSTYLE
     username: USERNAME
 spec:
-  replicas: 3
+  replicas: WRKREP
   selector:
     matchLabels:
       app: compose-worker-ENVSTYLE

@@ -16,6 +16,9 @@ REPLACE=\n
 TEST=test
 PRODUCTION=production
 
+nAPI=2
+nWRK=3
+
 # a full rebuild (we need so many variants due to the redis-url finding bash code..this can be optimized later)
 
 
@@ -30,10 +33,10 @@ cubecp:
 	cp deployment/template/*.yml deployment/
 
 cubereplT:
-	bash scripts/repl-deploy.sh ${TACC} 1 ${TEST} ${PRODUCTION}
+	bash scripts/repl-deploy.sh ${TACC} 1 ${TEST} ${PRODUCTION} 1 1
 
 cuberepl:
-	bash scripts/repl-deploy.sh ${TACC} 0 ${TEST} ${PRODUCTION}
+	bash scripts/repl-deploy.sh ${TACC} 0 ${TEST} ${PRODUCTION} ${nAPI} ${nWRK}
 
 cubeservicedeploy:
 	kubectl apply -f deployment/service-flask.yml
