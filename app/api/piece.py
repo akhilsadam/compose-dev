@@ -130,7 +130,7 @@ class piece(MethodResource):
                 application/json:
                   schema: JSON            
         """
-        route = f'/piece/{songid}/'
+        route = f'/piece/{songid}'
         try:
             output = access.play_piece(songid)
         except Exception as E: 

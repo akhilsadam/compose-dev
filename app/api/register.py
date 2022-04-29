@@ -58,7 +58,8 @@ def callresponse(i,k,path,values,io,rest,denylist,appcontext):
     # logger.info(segmented[odd])
     exval = [values[c] for c in segmented[odd]]
     # logger.info(exval)
-    call = "".join([exval[int(j/2)] if odd[j] else segmented[j] for j in range(len(segmented))])
+    call = "".join([str(exval[int(j/2)]) if odd[j] else str(segmented[j]) for j in range(len(segmented))])
+    # logger.info(call)
   else:
     call = path
   url = f"{options.baseurl}{call}"
