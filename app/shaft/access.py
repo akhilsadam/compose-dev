@@ -4,6 +4,8 @@ from app.redisclient import redis_client, redis_client_raw
 import logging
 logger = logging.getLogger('root')
 
+from app.options import options
+
 import pickle
 import musicpy as mp
 import pygame
@@ -46,5 +48,6 @@ def play_piece(key=0):
     return render_template(
         "audio.jinja2",
         piece=f"\'/static/audio/{name}.mp3\'",
+        proxy=options.proxy,
         piece2=name
     )

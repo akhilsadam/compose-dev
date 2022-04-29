@@ -76,8 +76,8 @@ cubeclean:
 cubewipe:
 	- rm deployment/*.yml
 
-cubeiterateT: cubecleanT cubecp cubereplT cubeservicedeploy cubereplTdeploy cubedeploy cubewipe # Test
-cubeiterate: cubeclean cubecp cuberepl cubeservicedeploy cuberepldeploy cubedeploy cubewipe # Deploy
+cubeiterateT: cubecleanT cubecp cubereplT cubeservicedeploy cubereplTdeploy cubedeploy cubewipe cubes# Test
+cubeiterate: cubeclean cubecp cuberepl cubeservicedeploy cuberepldeploy cubedeploy cubewipe cubes# Deploy
 
 cubes:
 	kubectl get pods
