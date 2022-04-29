@@ -1,8 +1,8 @@
 #!/bin/bash
-cd ../deployment
+cd deployment
 firstString=$(<deployment-flask.yml)
 firstStringTwo=$(<deployment-worker.yml)
-secondString=$(echo $(kubectl get services compose-redis-service --output=jsonpath="{.spec.clusterIP}") | tr -d '"')
+secondString=$(echo $(kubectl get services compose-redis-service-$1 --output=jsonpath="{.spec.clusterIP}") | tr -d '"')
 echo $secondString
 repline=$(echo "${firstString/ip_address/"$secondString"}")
 echo "$repline"   

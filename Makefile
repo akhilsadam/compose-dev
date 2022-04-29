@@ -13,6 +13,9 @@ APIFILE=doc/api.md
 SEARCH=\\n
 REPLACE=\n
 
+TEST=test
+PRODUCTION=production
+
 # a full rebuild (we need so many variants due to the redis-url finding bash code..this can be optimized later)
 
 iteraterun : kill clean build run
@@ -23,21 +26,27 @@ iterate: kill clean build testrun
 
 ###############
 
-# kubernetes:
+# kubernetes: (CAN PROBABLY be simplified)
 cubecp:
 	cp deployment/template/*.yml deployment/
 
 cubereplT:
-	bash scripts/repl-deploy.sh ${TACC} 1
+	bash scripts/repl-deploy.sh ${TACC} 1 ${TEST} ${PRODUCTION}
 
 cuberepl:
-	bash scripts/repl-deploy.sh ${TACC} 0
+	bash scripts/repl-deploy.sh ${TACC} 0 ${TEST} ${PRODUCTION}
 
-cubedeploy:
-	bash scripts/repl.sh
+cubeservicedeploy:
 	kubectl apply -f deployment/service-flask.yml
 	kubectl apply -f deployment/service-redis.yml
-	kubectl apply -f deployment/service-worker.yml
+
+cuberepltdeploy:
+	bash scripts/repl.sh ${TEST}
+
+cuberepldeploy:
+	bash scripts/repl.sh ${PRODUCTION}
+
+cubedeploy:
 	kubectl apply -f deployment/data-redis-volume.yml
 	kubectl apply -f deployment/data-flask-volume.yml
 	kubectl apply -f deployment/deployment-redis.yml
@@ -45,33 +54,36 @@ cubedeploy:
 	kubectl apply -f deployment/deployment-flask.yml
 	kubectl apply -f deployment/service-nodeport.yml
 
-cubecleanT: 
-	- kubectl delete deployment compose-flask-test
-	- kubectl delete deployment compose-worker-test
-	- kubectl delete deployment compose-redis-test
-	- kubectl delete pvc compose-data-redis-volume-test
-	- kubectl delete pvc compose-data-flask-volume-test
-	- kubectl delete services compose-flask-service-test
-	- kubectl delete services compose-worker-service-test
-	- kubectl delete services compose-redis-service-test
-	- kubectl delete services compose-nodeport-service-test
+cubecleant: 
+	- kubectl delete deployment compose-flask-${TEST}
+	- kubectl delete deployment compose-worker-${TEST}
+	- kubectl delete deployment compose-redis-${TEST}
+	- kubectl delete pvc compose-data-redis-volume-${TEST}
+	- kubectl delete pvc compose-data-flask-volume-${TEST}
+	- kubectl delete services compose-flask-service-${TEST}
+	- kubectl delete services compose-redis-service-${TEST}
+	- kubectl delete services compose-nodeport-service-${TEST}
 
 cubeclean:
-	- kubectl delete deployment compose-flask
-	- kubectl delete deployment compose-worker
-	- kubectl delete deployment compose-redis
-	- kubectl delete pvc compose-data-redis-volume
-	- kubectl delete pvc compose-data-flask-volume
-	- kubectl delete services compose-flask-service
-	- kubectl delete services compose-worker-service
-	- kubectl delete services compose-redis-service
-	- kubectl delete services compose-nodeport-service
+	- kubectl delete deployment compose-flask-${PRODUCTION}
+	- kubectl delete deployment compose-worker-${PRODUCTION}
+	- kubectl delete deployment compose-redis-${PRODUCTION}
+	- kubectl delete pvc compose-data-redis-volume-${PRODUCTION}
+	- kubectl delete pvc compose-data-flask-volume-${PRODUCTION}
+	- kubectl delete services compose-flask-service-${PRODUCTION}
+	- kubectl delete services compose-redis-service-${PRODUCTION}
+	- kubectl delete services compose-nodeport-service-${PRODUCTION}
 
 cubewipe:
 	- rm deployment/*.yml
 
-cubeiterateT: cubecleanT cubecp cubereplT cubedeploy cubewipe # Test
-cubeiterate: cubeclean cubecp cuberepl cubedeploy cubewipe # Deploy
+cubeiterateT: cubecleant cubecp cubereplT cubeservicedeploy cuberepltdeploy cubedeploy cubewipe # Test
+cubeiterate: cubeclean cubecp cuberepl cubeservicedeploy cuberepldeploy cubedeploy cubewipe # Deploy
+
+cubes:
+	kubectl get pods
+	kubectl get deployments
+	kubectl get pvc
 ###############
 
 images:
