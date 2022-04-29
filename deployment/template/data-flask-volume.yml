@@ -2,11 +2,11 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: compose-data-flask-volume
+  name: compose-data-flask-volume-ENVSTYLE
   labels:
-    app: compose
-    env: test
-    username: astacc
+    app: compose-flask-ENVSTYLE
+    env: ENVSTYLE
+    username: USERNAME
 spec:
   accessModes:
     - ReadWriteOnce

@@ -2,25 +2,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: compose-worker
+  name: compose-worker-ENVSTYLE
   labels:
-    app: compose-worker
-    env: test
-    username: astacc
+    app: compose-worker-ENVSTYLE
+    env: ENVSTYLE
+    username: USERNAME
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: compose-worker
+      app: compose-worker-ENVSTYLE
   template:
     metadata:
       labels:
-        app: compose-worker
-        env: test
-        username: astacc
+        app: compose-worker-ENVSTYLE
+        env: ENVSTYLE
+        username: USERNAME
     spec:
       containers:
-        - name: compose-worker
+        - name: compose-worker-ENVSTYLE
           imagePullPolicy: Always
           image: akhilsadam/compose-worker:0.0.2
           command: ['python3']
@@ -29,9 +29,9 @@ spec:
           - name: http
             containerPort: 5026
           volumeMounts:
-            - name: compose-data-flask-volume
+            - name: compose-data-flask-volume-ENVSTYLE
               mountPath: "/app/app/static/audio"
       volumes:
-        - name: compose-data-flask-volume
+        - name: compose-data-flask-volume-ENVSTYLE
           persistentVolumeClaim:
-            claimName: compose-data-flask-volume
+            claimName: compose-data-flask-volume-ENVSTYLE

@@ -2,17 +2,17 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: compose-redis-service
+  name: compose-redis-service-ENVSTYLE
   labels:
-    app: compose-redis-service
+    app: compose-redis-service-ENVSTYLE
     env: ENVSTYLE
-    username: astacc
+    username: USERNAME
 spec:
   type: ClusterIP
   selector:
-    app: compose-redis
+    app: compose-redis-ENVSTYLE
     env: ENVSTYLE
-    username: astacc
+    username: USERNAME
   ports:
   - name: http
     port: 6379

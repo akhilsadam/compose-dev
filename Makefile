@@ -1,5 +1,9 @@
-NAME?=akhilsadam
-TACC?=as_tacc
+# Make sure your variables are correct! (The TACC variable can be any username without ,_,-, or any other fancy characters.) 
+# Note that you CAN run/deploy exactly as it is, but then my deployment and yours will fight each other (we will be starting/restarting the same kubernetes deployments.)
+
+NAME=akhilsadam
+TACC?=astacc
+
 PACKAGE=compose
 WORKER=compose-worker
 GITHUB=git@github.com:akhilsadam/compose-dev.git
@@ -22,13 +26,12 @@ iterate: kill clean build testrun
 # kubernetes:
 cubecp:
 	cp deployment/template/*.yml deployment/
-	bash scripts/repl-user.sh
 
 cubereplT:
-	bash scripts/repl-deploy.sh ${USERNAME} ${ID} test
+	bash scripts/repl-deploy.sh ${TACC} 1
 
 cuberepl:
-	bash scripts/repl-deploy.sh ${USERNAME} ${ID} deploy
+	bash scripts/repl-deploy.sh ${TACC} 0
 
 cubedeploy:
 	bash scripts/repl.sh

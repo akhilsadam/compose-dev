@@ -2,17 +2,17 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: compose-nodeport-service
+  name: compose-nodeport-service-ENVSTYLE
   labels:
-    app: compose-nodeport-service
+    app: compose-nodeport-service-ENVSTYLE
     env: ENVSTYLE
-    username: astacc
+    username: USERNAME
 spec:
   type: NodePort
   selector:
-    app: compose-flask
+    app: compose-flask-ENVSTYLE
     env: ENVSTYLE
-    username: astacc
+    username: USERNAME
   ports:
   - name: http
     port: 5026

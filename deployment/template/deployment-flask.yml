@@ -2,22 +2,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: compose-flask
+  name: compose-flask-ENVSTYLE
   labels:
-    app: compose-flask
-    env: test
-    username: astacc
+    app: compose-flask-ENVSTYLE
+    env: ENVSTYLE
+    username: USERNAME
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: compose-flask
+      app: compose-flask-ENVSTYLE
   template:
     metadata:
       labels:
-        app: compose-flask
-        env: test
-        username: astacc
+        app: compose-flask-ENVSTYLE
+        env: ENVSTYLE
+        username: USERNAME
     spec:
       containers:
         - name: compose
@@ -29,9 +29,9 @@ spec:
           - name: http
             containerPort: 5026
           volumeMounts:
-            - name: compose-data-flask-volume
+            - name: compose-data-flask-volume-ENVSTYLE
               mountPath: "/app/app/static/audio"
       volumes:
-        - name: compose-data-flask-volume
+        - name: compose-data-flask-volume-ENVSTYLE
           persistentVolumeClaim:
-            claimName: compose-data-flask-volume
+            claimName: compose-data-flask-volume-ENVSTYLE
