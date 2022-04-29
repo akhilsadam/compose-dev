@@ -23,5 +23,5 @@ class options:
         Args:
             pxy (str): ip address extension
         """
-        options.proxy=pxy
+        options.proxy=f"/{pxy}"
         options.baseurl = f"http://{options.host}:{options.port}{options.proxy}"
