@@ -6,7 +6,8 @@ marshmallow
 webargs
 redis
 requests
-flask-apispec==0.11.1
+Jinja2==3.0.1
+flask-apispec==0.11.0
 hotqueue
 uuid
 python-dotenv
