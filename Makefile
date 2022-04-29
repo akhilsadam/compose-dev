@@ -18,11 +18,10 @@ PRODUCTION=production
 
 # a full rebuild (we need so many variants due to the redis-url finding bash code..this can be optimized later)
 
-iteraterun : kill clean build run
 
 iteratetest : kill clean build test
 
-iterate: kill clean build testrun
+iterate: kill clean build run
 
 ###############
 
