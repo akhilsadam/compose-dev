@@ -149,4 +149,4 @@ for file in os.listdir('app/api/'):
 
 #------------------------------------------------------ 
 from app.api.piece import piece
-piece.init()
+piece.init() # initialize app

@@ -11,11 +11,13 @@ RUN pip3 install -r /app/requirements.txt
 # COPY . /app
 COPY *.* /app/
 RUN mkdir /app/app
+RUN mkdir /app/app/static
 COPY /app/*.* /app/app/
 COPY /app/core /app/app/core
 COPY /app/queue /app/app/queue
 COPY /app/quarry /app/app/quarry
-COPY /app/static /app/app/static
+COPY /app/static/audio /app/app/static/audio
+COPY /app/static/sfz /app/app/static/sfz
 COPY /app/templates /app/app/templates
 
 

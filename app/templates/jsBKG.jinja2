@@ -1,0 +1,30 @@
+<style>
+.avance-recule{
+    -webkit-mask-image: url("{{proxy}}/static/svg/circle.svg");
+    mask-image: url("{{proxy}}/static/svg/circle.svg");
+    background: transparent;
+    -webkit-mask-size: 3em 3em;
+    mask-size: 3em 3em;
+}
+.emapi_bkg{
+    background: url({{proxy}}/static/img/stellar_disk2.png);
+}
+.rooftop:before{
+    background: url({{proxy}}/static/img/garden.png);
+    background-attachment: scroll;
+    background-repeat: repeat-x;
+    background-size: 80%;
+    background-position: 2% 50%;
+}
+@media(max-width:1200px){
+    .rooftop:before{
+        background: url({{proxy}}/static/img/stellar_disk.png);
+        background-repeat: no-repeat;
+        background-position: 10% 50%;
+        background-size: 120%;
+    }
+}
+.swagger-section{
+    background: url({{proxy}}/static/img/garden.png);
+}
+</style>
