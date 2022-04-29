@@ -9,14 +9,19 @@ if test $2 -gt 0
 then
     np=${lines[2]}
     npa=$(echo ${lines[4]}${linesA[1]} | tr -d '"')
-    env=test
+    env=$3
 else
     np=${lines[1]}
     npa=$(echo ${lines[3]}${linesA[0]} | tr -d '"')
-    env=production
+    env=$4
 fi
 
-echo "environment: $env | @ip_address: $npa | with port: $np"
+npa=${npa%*/}
+proxy=${npa##*/}
+
+echo "environment: $env | @ip_address: $npa | with port: $np | and proxy: $proxy"
+
+
 
 cd $(pwd)/deployment/
 for f in $(echo *)
@@ -27,6 +32,7 @@ do
         firstString=$(<$f)
         firstString=$(echo "${firstString//NODEPORT/$np}")
         firstString=$(echo "${firstString//ENVSTYLE/$env}")
+        firstString=$(echo "${firstString//PROXY/$proxy}")
         echo "${firstString//USERNAME/"$1"}" > $f
     fi
 done

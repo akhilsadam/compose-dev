@@ -2,36 +2,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: compose-flask-ENVSTYLE
+  name: compose-flask-test
   labels:
-    app: compose-flask-ENVSTYLE
-    env: ENVSTYLE
-    username: USERNAME
+    app: compose-flask-test
+    env: test
+    username: astacc
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: compose-flask-ENVSTYLE
+      app: compose-flask-test
   template:
     metadata:
       labels:
-        app: compose-flask-ENVSTYLE
-        env: ENVSTYLE
-        username: USERNAME
+        app: compose-flask-test
+        env: test
+        username: astacc
     spec:
       containers:
         - name: compose
           imagePullPolicy: Always
           image: akhilsadam/compose:0.0.2
           command: ['python3']
-          args: ['-u', 'core.py', ip_address, PROXY]
+          args: ['-u', 'core.py', ip_address, as_tacc-2]
           ports:
           - name: http
             containerPort: 5026
           volumeMounts:
-            - name: compose-data-flask-volume-ENVSTYLE
+            - name: compose-data-flask-volume-test
               mountPath: "/app/app/static/audio"
       volumes:
-        - name: compose-data-flask-volume-ENVSTYLE
+        - name: compose-data-flask-volume-test
           persistentVolumeClaim:
-            claimName: compose-data-flask-volume-ENVSTYLE
+            claimName: compose-data-flask-volume-test

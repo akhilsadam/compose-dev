@@ -1,0 +1,19 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: compose-redis-service-test
+  labels:
+    app: compose-redis-service-test
+    env: test
+    username: astacc
+spec:
+  type: ClusterIP
+  selector:
+    app: compose-redis-test
+    env: test
+    username: astacc
+  ports:
+  - name: http
+    port: 6379
+    targetPort: 6379
