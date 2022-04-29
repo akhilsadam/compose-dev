@@ -2,7 +2,7 @@
 window.onload = function() {
    let myiFrame = document.getElementById("emapi");
    let doc = myiFrame.contentDocument;
-   doc.head.innerHTML = doc.head.innerHTML + '<link rel="stylesheet" href="{{ url_for('static', filename='dist/css/api.css') }}" />' + '<link rel="stylesheet" href="{{ url_for('static', filename='dist/css/scroll.css') }}" />' + '<link rel="stylesheet" href="{{ url_for('static', filename='dist/css/avance.css') }}" />';
+   doc.head.innerHTML = doc.head.innerHTML + '<link rel="stylesheet" href="{{proxy}}{{ url_for('static', filename='dist/css/api.css') }}" />' + '<link rel="stylesheet" href="{{proxy}}{{ url_for('static', filename='dist/css/scroll.css') }}" />' + '<link rel="stylesheet" href="{{proxy}}{{ url_for('static', filename='dist/css/avance.css') }}" />';
    // doc.body.innerHTML = doc.body.innerHTML +
    // unescape('%3Cscript type="text/javascript"%3E' +
    // ' window.onscroll = () => {' +

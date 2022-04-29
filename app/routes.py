@@ -35,6 +35,7 @@ def home():
         title=options.appname,
         description="",
         template="home-template",
+        proxy=options.proxy,
         readmelink = options.readmelink,
     )
 
@@ -61,6 +62,7 @@ def api():
         description="",
         template="home-template",
         readmelink = options.readmelink,
+        proxy=options.proxy,
         apilink = "/api",
     )
 
@@ -81,6 +83,7 @@ def pdf():
     """
     return render_template(
         "readme.jinja2",
+        proxy=options.proxy,
         general="",
         template="home-template",
     )
