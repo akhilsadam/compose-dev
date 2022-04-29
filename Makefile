@@ -39,7 +39,7 @@ cubeservicedeploy:
 	kubectl apply -f deployment/service-flask.yml
 	kubectl apply -f deployment/service-redis.yml
 
-cuberepltdeploy:
+cubereplTdeploy:
 	bash scripts/repl.sh ${TEST}
 
 cuberepldeploy:
@@ -53,7 +53,7 @@ cubedeploy:
 	kubectl apply -f deployment/deployment-flask.yml
 	kubectl apply -f deployment/service-nodeport.yml
 
-cubecleant: 
+cubecleanT: 
 	- kubectl delete deployment compose-flask-${TEST}
 	- kubectl delete deployment compose-worker-${TEST}
 	- kubectl delete deployment compose-redis-${TEST}
@@ -76,7 +76,7 @@ cubeclean:
 cubewipe:
 	- rm deployment/*.yml
 
-cubeiterateT: cubecleant cubecp cubereplT cubeservicedeploy cuberepltdeploy cubedeploy cubewipe # Test
+cubeiterateT: cubecleanT cubecp cubereplT cubeservicedeploy cubereplTdeploy cubedeploy cubewipe # Test
 cubeiterate: cubeclean cubecp cuberepl cubeservicedeploy cuberepldeploy cubedeploy cubewipe # Deploy
 
 cubes:

@@ -25,7 +25,7 @@ do
     then
         echo "Processing $f file..."
         firstString=$(<$f)
-        firstString=$(echo "${firstString//NODEPORT/"$np"}")
+        firstString=$(echo "${firstString//NODEPORT/$np}")
         firstString=$(echo "${firstString//ENVSTYLE/$env}")
         echo "${firstString//USERNAME/"$1"}" > $f
     fi
