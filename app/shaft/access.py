@@ -1,5 +1,5 @@
 from flask import jsonify, render_template
-from app.redisclient import redis_client, redis_client_raw
+from app.redisclient import *
 
 import logging
 logger = logging.getLogger('root')
@@ -9,24 +9,6 @@ from app.options import options
 import pickle
 import musicpy as mp
 import pygame
-
-def redis_hget(db):
-    rd = redis_client(db)
-    out = [rd.hgetall(key) for key in rd.keys()]
-    # logger.info(rd.keys())
-    return out
-
-def redis_get_raw(db):
-    rd = redis_client_raw(db)
-    out = [rd.get(key) for key in rd.keys()]
-    # logger.info(rd.keys())
-    return out
-
-def redis_get(db):
-    rd = redis_client(db)
-    out = [rd.get(key) for key in rd.keys()]
-    # logger.info(rd.keys())
-    return out
 
 
 def get_pieces():

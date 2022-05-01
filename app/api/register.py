@@ -18,7 +18,7 @@ from app.options import options
 # Not pytesting the following functions as 1) testing the requests is unecessary, 2) this is not core functionality and is not required by the specifications,
 # 3) this is an API test in and of itself, and part of other tests, 4) developer exhaustion...
 
-def capture(url, type=0, appcontext=None):
+def capture(url, type=0, appcontext=None) -> dict:
   """Parses JSON from an endpoint.
   Args:
       url (str): A string containing the endpoint URL.
@@ -36,7 +36,7 @@ def capture(url, type=0, appcontext=None):
   logger.info(out)
   return out
 
-def callresponse(i,k,path,values,io,rest,denylist,appcontext):
+def callresponse(i,k,path,values,io,rest,denylist,appcontext) -> list:
   """The example call and response section from the generateAPI function.
   Args:
       i (int): io array index (current function id).
@@ -90,7 +90,7 @@ def callresponse(i,k,path,values,io,rest,denylist,appcontext):
 
 # really should split this function...
 
-def generateAPI(api,test=False,badvalues=False,appcontext=None):
+def generateAPI(api,test=False,badvalues=False,appcontext=None) -> np.ndarray:
   """Structure API information (currenly assumes single endpoint: either GET or POST, not both).
   Arguments: 
     api (dict): The API dictionary parsed by FlaskApiSpec.
@@ -169,7 +169,7 @@ def generateAPI(api,test=False,badvalues=False,appcontext=None):
   return io
 
 
-def formatAPI(io):
+def formatAPI(io) -> str:
   """Structure API information.
   Args: 
     io (array): a NumPy array structure containing descriptions, parameter names&descriptions, response descriptions, example input calls, example outputs.
@@ -199,7 +199,7 @@ def formatAPI(io):
 class register(MethodResource):
 
     @app.route("/api/save", methods=['GET'])
-    def register():
+    def register() -> str:
         """Application API (generate API examples). UNSUPPORTED, so use at your own risk.
         ---
         get:

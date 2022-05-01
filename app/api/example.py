@@ -17,7 +17,7 @@ from app.schema import *
 from app.redisclient import redis_client
 mainkey='meteorite_landings'
 
-def data_out():
+def data_out() -> list:
     """Get Meteorite Landing observations from Redis
         Returns:
             list: a list of dictionaries contain ML data.
@@ -34,7 +34,7 @@ class example(MethodResource):
     loaded = False      
 
     @app.route("/example", methods=['POST'])
-    def data_in():
+    def data_in() -> str:
         """Get Meteorite Landing observations from website to Redis.
         ---
         post:
@@ -58,7 +58,7 @@ class example(MethodResource):
             return "Successful Load!"
 
     @app.route("/example", methods=['GET'])
-    def data_io():
+    def data_io() -> str:
         """ Meteorite Landing observations
         ---
         get:

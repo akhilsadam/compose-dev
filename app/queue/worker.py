@@ -28,7 +28,7 @@ class worker:
         #---
         function = getattr(globals()[job['class']],job['function'])
         args = js.loads(job['args'])
-        logger.info(f"Running function {job['function']} from class/module {job['class']} with args: [{','.join(args)}]")
+        logger.info(f"Running function {job['function']} from class/module {job['class']} with args: [{','.join(js.dumps(args))}]")
         output = function(*args) if len(args) > 0 else function()
         if output is None:
             output = 'None'

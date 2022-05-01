@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger('root')
+
 from musicpy import *
 from musicpy.sampler import *
 import numpy as np
@@ -6,19 +9,22 @@ import scipy.signal as sig
 import matplotlib as mpl
 from matplotlib import pyplot as plt
 backend = plt.get_backend()
-print(backend)
+logger.info(f"MPL BACKEND: {backend}")
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
 
 from . import utils as ul
 from . import chords as cd
 import pretty_midi
 import libfmp.c1
+# from django.http import HttpResponse
+import io
+import base64
 
-import logging
-logger = logging.getLogger('root')
 
 plt.switch_backend(backend)
 
-tmp_dir = "tmp/"
+tmp_dir = "/app/app/static/audio/tmp"
 
 smp = sampler(6, name='sfz')
 names = ['akai_steinway.sf2','akai_steinway.sf2','koto.sf2','shamisen.sf2','ruteki.sf2','air_gamelan.sf2']
@@ -70,7 +76,6 @@ def info(piece, i):
     midi = pretty_midi.PrettyMIDI(name)
     bars, chords, chordNames, data = analyze(track)
     return bars, chords, chordNames, data, midi
-    
 
 def plot(bars,data,midi,tracklabel=0,fgz=(20,8)):
     sp = data.shape
@@ -79,9 +84,8 @@ def plot(bars,data,midi,tracklabel=0,fgz=(20,8)):
     gs = mpl.gridspec.GridSpec(nrows=2,ncols=1)
     gs.update(wspace=0.0, hspace=0.0, left=0.0, right=0.0, bottom=0.0, top=0.0) 
     for k in range(ul.n_keys):
-        if k != 2:
-            ax[0].plot(bars, data[:, k], c=ul.cs[k])
-            leg.append(ul.keys[k])
+        ax[0].plot(bars, data[:, k], c=ul.cs[k])
+        leg.append(ul.keys[k])
     ax[0].legend(leg)
     ax[0].margins(0)
     ax[1].margins(0)
@@ -90,20 +94,43 @@ def plot(bars,data,midi,tracklabel=0,fgz=(20,8)):
     tf = lambda x: np.interp(x,tfx,list(range(len(tfx))))
     tfscore = [[tf(sc[0]),tf(sc[1]),sc[2],1,f'Track {tracklabel}'] for sc in score]
     libfmp.c1.visualize_piano_roll(tfscore, ax=ax[1])
+    ax[1].set_ylabel("Note # / Pitch")
     ax[1].set_xlabel("bars / measures into the piece")
     ax[0].set_ylabel("value")
     plt.suptitle(f"Elementwise Graphs for Track {tracklabel}")
-    plt.show()
+    # plt.show()
+    response = img(fig)
     plt.close()
+    return response
+   
+def plotall(piece : object, name : str) -> str:
+    i = 0 # assume single-track songs for now...
+    bars, chords, chordNames, data, midi = info(piece,i)
+    return plot(bars,data,midi,tracklabel=f'{i} from {name}')
 
-def plot2(x,data,tracklabel=0,fgz=(20,8),title="Elementwise Graphs for Piece"):
+def img(fig):
+    my_stringIObytes = io.BytesIO()
+    fig.savefig(my_stringIObytes, format='jpg', dpi=160)
+    my_stringIObytes.seek(0)
+    return base64.b64encode(my_stringIObytes.read())
+    # canvas=FigureCanvas(fig)
+    # response=HttpResponse(content_type='image/png')
+    # fig.savefig(response, format='png', dpi=600)
+    # return response.content
+    
+            
+def mp3(piece,name): 
+    smp.export(obj=piece,mode='mp3',action='export',filename=f'{name}.mp3')
+            
+############################# testing methods / sandbox below / not part of API ###################
+
+def _plot2(x,data,tracklabel=0,fgz=(20,8),title="Elementwise Graphs for Piece"):
     sp = data.shape
     leg = []
     fig = plt.figure(1,figsize=fgz)                     
     for k in range(ul.n_keys):
-        if k != 2:
-            plt.plot(x, data[:, k], c=ul.cs[k])
-            leg.append(ul.keys[k])
+        plt.plot(x, data[:, k], c=ul.cs[k])
+        leg.append(ul.keys[k])
     plt.legend(leg)
     plt.margins(0)
     plt.xlabel("bars / measures into the piece")
@@ -112,7 +139,7 @@ def plot2(x,data,tracklabel=0,fgz=(20,8),title="Elementwise Graphs for Piece"):
     plt.show()
     plt.close()
     
-def plotAll(piece,mt=32,fgz=(20,4)):
+def _plotAll(piece,mt=32,fgz=(20,4)):
     datas = []
     barlist = []
     for i in range(len(piece.tracks)):
@@ -140,6 +167,3 @@ def plotAll(piece,mt=32,fgz=(20,4)):
     plt.close()
     plot2(xc[0],dataf -marray,tracklabel=0,fgz=fgz,title="Elementwise Graphs for Piece - Demeaned")
     return xc[0], dataf
-
-def mp3(piece,name): 
-    smp.export(obj=piece,mode='mp3',action='export',filename=f'{name}.mp3')

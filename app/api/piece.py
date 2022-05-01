@@ -24,7 +24,7 @@ class piece(MethodResource):
     loaded = False      
 
     @app.route("/init", methods=['POST'])
-    def init():
+    def init() -> str:
         """Set up all example pieces in repository
         ---
         post:
@@ -45,7 +45,7 @@ class piece(MethodResource):
             return "Submitted Initialization Job."
 
     @app.route("/piece/<int:songid>/", methods=['GET'])
-    def piece_single(songid : int):
+    def piece_single(songid : int) -> str:
         """ Return a piece as JSON
         ---
         get:
@@ -77,7 +77,7 @@ class piece(MethodResource):
         return jsonify(out)
 
     @app.route("/piece/", methods=['GET'])
-    def piece_all():
+    def piece_all() -> str:
         """ Return a list of all available pieces as JSON
         ---
         get:
@@ -110,7 +110,7 @@ class piece(MethodResource):
         return jsonify(out)
 
     @app.route("/play/<int:songid>/", methods=['GET'])
-    def play(songid : int):
+    def play(songid : int) -> str:
         """ Play a piece
         ---
         get:

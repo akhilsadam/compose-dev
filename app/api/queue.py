@@ -21,7 +21,7 @@ from app.shaft import access
 class queue:
 
   @app.route("/queue", methods=['GET'])
-  def list_queue():
+  def list_queue() -> str:
       """ Return a list of all waiting jobs...
       ---
       get:

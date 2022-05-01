@@ -17,7 +17,7 @@ chordbase = np.array([
     obj([['♭9','minor ninth'],'Seventh with Minor Ninth','creepiness, ominousness, fear, darkness']),
     obj([['maj2','major second'],'Major 2nd','pleasurable longing, displeasure']),
     obj([['maj3','major third'],'Major 3rd','joy, happiness, brightness']),
-    obj([['maj6','major sixth'],'Major 6th','winsomeness, pleasurable longing']),
+    obj([['maj6','major sixth','add6'],'Major 6th','winsomeness, pleasurable longing']),
     obj([['maj7','major seventh'],'Major Seventh','romance, softness, jazziness, serenity, tranquillity, exhilaration, aspiration, displeasure, violent longing']),
     obj([['maj','major'],'Major','happiness, cheerfulness, confidence, brightness, satisfaction']),
     obj([['m2','minor second'],'Minor Second','melancholy, displeasure, anguish, darkness']),
