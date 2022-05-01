@@ -77,36 +77,56 @@ def info(piece, i):
     bars, chords, chordNames, data = analyze(track)
     return bars, chords, chordNames, data, midi
 
-def plot(bars,data,midi,tracklabel=0,fgz=(20,8)):
+
+def _plot2(ax,x,data):
     sp = data.shape
-    leg = []
+    leg = []                    
+    for k in range(ul.n_keys):
+        ax.plot(x, data[:, k], c=ul.cs[k])
+        leg.append(ul.keys[k])
+
+def plot(piece : object, name : str, mt : int = 32, fgz: list = (20,8)) -> str:
+    leg = ul.keys
     fig,ax = plt.subplots(2,1,figsize=fgz,sharex=True)
     gs = mpl.gridspec.GridSpec(nrows=2,ncols=1)
     gs.update(wspace=0.0, hspace=0.0, left=0.0, right=0.0, bottom=0.0, top=0.0) 
-    for k in range(ul.n_keys):
-        ax[0].plot(bars, data[:, k], c=ul.cs[k])
-        leg.append(ul.keys[k])
+    #################    
+    datas = []
+    barlist = []
+    for i in range(len(piece.tracks)):
+        bars, chords, chordNames, data, _ = info(piece,i)
+        datas.append(data)
+        barlist.append(bars)
+    #################    
+    top = int(piece.bars()+1)
+    dataf = np.zeros((top*mt,ul.n_keys))
+    xc = [1]
+    #################
+    for bars,data in zip(barlist,datas):
+        x, idata = interpdata(top,bars,data,mt=mt)
+        dataf = dataf + idata
+        xc[0] = x
+    #################
+    _plot2(ax[0],xc[0],dataf)
+    ################# 
     ax[0].legend(leg)
     ax[0].margins(0)
     ax[1].margins(0)
+    midi = pretty_midi.PrettyMIDI(f'/app/app/core/midi/{name}.mid')
     score = libfmp.c1.c1s2_symbolic_rep.midi_to_list(midi)
     tfx = midi.get_downbeats()
     tf = lambda x: np.interp(x,tfx,list(range(len(tfx))))
-    tfscore = [[tf(sc[0]),tf(sc[1]),sc[2],1,f'Track {tracklabel}'] for sc in score]
+    tfscore = [[tf(sc[0]),tf(sc[1]),sc[2],1,f'{name}'] for sc in score]
     libfmp.c1.visualize_piano_roll(tfscore, ax=ax[1])
     ax[1].set_ylabel("Note # / Pitch")
     ax[1].set_xlabel("bars / measures into the piece")
     ax[0].set_ylabel("value")
-    plt.suptitle(f"Elementwise Graphs for Track {tracklabel}")
-    # plt.show()
+    plt.suptitle(f"Elementwise Graphs for {name}")
+    #################
     response = img(fig)
     plt.close()
+    #################
     return response
-   
-def plotall(piece : object, name : str) -> str:
-    i = 0 # assume single-track songs for now...
-    bars, chords, chordNames, data, midi = info(piece,i)
-    return plot(bars,data,midi,tracklabel=f'{i} from {name}')
 
 def img(fig):
     my_stringIObytes = io.BytesIO()
@@ -124,20 +144,6 @@ def mp3(piece,name):
             
 ############################# testing methods / sandbox below / not part of API ###################
 
-def _plot2(x,data,tracklabel=0,fgz=(20,8),title="Elementwise Graphs for Piece"):
-    sp = data.shape
-    leg = []
-    fig = plt.figure(1,figsize=fgz)                     
-    for k in range(ul.n_keys):
-        plt.plot(x, data[:, k], c=ul.cs[k])
-        leg.append(ul.keys[k])
-    plt.legend(leg)
-    plt.margins(0)
-    plt.xlabel("bars / measures into the piece")
-    plt.ylabel("value")
-    plt.suptitle(title)
-    plt.show()
-    plt.close()
     
 def _plotAll(piece,mt=32,fgz=(20,4)):
     datas = []

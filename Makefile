@@ -116,7 +116,7 @@ clean:
 	- rm app/.pytest_cache/ -r
 	- rm doc/r/log_r.txt
 	- rm flask-data/*.mp3
-	- rm app/core/temp.mid
+	- rm flask-data/*.mid
 	- rm redis-data/dump.rdb
 
 build:

@@ -61,7 +61,7 @@ class appfields:
             try:
                 piece = pickle.loads(rdr.get(id))
                 nm = rd0.hget(id,'name')
-                resp = element.plotall(piece,nm)
+                resp = element.plot(piece,nm)
                 rd.set(name, resp)
                 return str(resp)[:10]
             except Exception as E:

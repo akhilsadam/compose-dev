@@ -60,6 +60,8 @@ class analyze(MethodResource):
         return render_template(
           "img.jinja2",
           img=byte,
+          id=songid,
+          proxy=options.proxy
           # img=resp,
         )
 
