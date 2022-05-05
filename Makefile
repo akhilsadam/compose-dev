@@ -33,7 +33,7 @@ cubecp:
 	cp deployment/template/*.yml deployment/
 
 cubereplT:
-	bash scripts/repl-deploy.sh ${TACC} 1 ${TEST} ${PRODUCTION} 1 1
+	bash scripts/repl-deploy.sh ${TACC} 1 ${TEST} ${PRODUCTION} 1 2
 
 cuberepl:
 	bash scripts/repl-deploy.sh ${TACC} 0 ${TEST} ${PRODUCTION} ${nAPI} ${nWRK}

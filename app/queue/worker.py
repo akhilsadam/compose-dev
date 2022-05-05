@@ -2,6 +2,7 @@
 import json as js
 import os
 from app.queue.jobs import jobs
+import app.queue.identity as identity
 import logging
 logger = logging.getLogger('root')
 
@@ -28,6 +29,7 @@ class worker:
         #---
         function = getattr(globals()[job['class']],job['function'])
         args = js.loads(job['args'])
+        identity.current_id = job['id']
         logger.info(f"Running function {job['function']} from class/module {job['class']} with args: [{','.join(js.dumps(args))}]")
         output = function(*args) if len(args) > 0 else function()
         if output is None:

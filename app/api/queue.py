@@ -20,7 +20,7 @@ from app.shaft import access
 
 class queue:
 
-  @app.route("/queue", methods=['GET'])
+  @app.route("/queue/", methods=['GET'])
   def list_queue() -> str:
       """ Return a list of all waiting jobs...
       ---
@@ -31,7 +31,7 @@ class queue:
         parameters:
         - name: start
           in: path
-          description: Index (int) to start from for the data list.
+          description: Job Index (int) in time to start from for the data list.
           required: false
           example: 0
         responses:
@@ -42,15 +42,19 @@ class queue:
                 schema: JSON            
       """
       a0 = rq.args.get('start', 0)
-      route = '/queue'
+      route = '/queue/'
       try: st = int(a0)
       except ValueError: 
           msg = "Invalid start parameter. Please input an integer"
           logger.error(f'{route}:{msg}')
           return msg
       # logger.info(f"GET : {route}")
-      out = access.redis_hget(1)[st:]
-      return jsonify(out)
+      out = access.redis_hget(1)
+      out.sort(key=lambda x: x['id'],reverse=True)
+      if st != 0:
+        out = out[:-st]
+      response =  jsonify(out)
+      return response
 
 
           

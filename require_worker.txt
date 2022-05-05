@@ -17,7 +17,7 @@ jpcm
 pynverse
 colour_science
 pytest
-musicpy==5.16
+musicpy==5.17
 scipy
 nrclex
 pretty_midi
@@ -27,4 +27,4 @@ pygame
 pydub
 sf2_loader
 dask
-django==4.0.3
+joblib

@@ -26,3 +26,6 @@ class Config:
     STATIC_FOLDER = "static"
     TEMPLATES_FOLDER = "templates"
     COMPRESSOR_DEBUG = environ.get("COMPRESSOR_DEBUG")
+
+    JSONIFY_PRETTYPRINT_REGULAR=True
+    JSON_SORT_KEYS=False

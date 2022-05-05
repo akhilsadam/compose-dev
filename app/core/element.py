@@ -10,27 +10,24 @@ import matplotlib as mpl
 from matplotlib import pyplot as plt
 backend = plt.get_backend()
 logger.info(f"MPL BACKEND: {backend}")
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.figure import Figure
 
 from . import utils as ul
 from . import chords as cd
 import pretty_midi
 import libfmp.c1
-# from django.http import HttpResponse
-import io
-import base64
-
+from . import machine as mx
 
 plt.switch_backend(backend)
 
 tmp_dir = "/app/app/static/audio/tmp"
 
-smp = sampler(6, name='sfz')
-names = ['akai_steinway.sf2','akai_steinway.sf2','koto.sf2','shamisen.sf2','ruteki.sf2','air_gamelan.sf2']
-for i in range(len(names)):
-    logger.info(f"Loading : {names[i]}")
-    smp.load(i,f'app/static/sfz/{names[i]}')
+try: smp
+except NameError:
+    smp = sampler(6, name='sfz')
+    names = ['akai_steinway.sf2','akai_steinway.sf2','koto.sf2','shamisen.sf2','ruteki.sf2','air_gamelan.sf2']
+    for i in range(len(names)):
+        logger.info(f"Loading : {names[i]}")
+        smp.load(i,f'app/static/sfz/{names[i]}')
 
 def load(midi):
     return mp.read(midi),pretty_midi.PrettyMIDI(midi)
@@ -84,6 +81,62 @@ def _plot2(ax,x,data):
     for k in range(ul.n_keys):
         ax.plot(x, data[:, k], c=ul.cs[k])
         leg.append(ul.keys[k])
+        
+def plotPCA(pieces : list, names : list, fgz: list = (16,16)) -> str:
+    var,tfm = mx.chdSpace()
+    ys = []
+    for piece in pieces:
+        _, yun = get_data(piece)
+        y = np.matmul(yun,tfm)
+        # logger.info(f'PCA shape: {y.shape}')
+        ys.append(y)
+    fig = plt.figure(figsize = fgz)
+    for i in range(len(pieces)):
+        plt.scatter(ys[i][:,0],ys[i][:,1])
+    plt.legend(names)
+    plt.xlabel('Principal Component #1 (of chords)')
+    plt.ylabel('Principal Component #2 (of chords)')
+    plt.title(f'Pieces as a Distribution on a 2D PC Space \n(explains {int(1000*var)/10}% of the variance)')
+    response = ul.img(fig)
+    plt.close()
+    return response
+        
+def plotPCA2(pieces : list, names : list, fgz: list = (16,16)) -> str:
+    var,tfm = mx.chdSpace()
+    ys = []
+    for piece in pieces:
+        _, yun = get_data(piece)
+        y = np.matmul(yun,tfm)
+        # logger.info(f'PCA shape: {y.shape}')
+        ys.append(y)
+    fig = plt.figure(figsize = fgz)
+    for i in range(len(pieces)):
+        plt.scatter(np.mean(ys[i][:,0]),np.mean(ys[i][:,1]))
+    plt.legend(names)
+    plt.xlabel('Principal Component #1')
+    plt.ylabel('Principal Component #2')
+    plt.title(f'Pieces as a Point on a 2D PC Space \n(explains {int(1000*var)/10}% of the variance)')
+    response = ul.img(fig)
+    plt.close()
+    return response
+    
+def get_data(piece : object, mt : int = 32) -> list:
+    datas = []
+    barlist = []
+    for i in range(len(piece.tracks)):
+        bars, chords, chordNames, data, _ = info(piece,i)
+        datas.append(data)
+        barlist.append(bars)
+    #################    
+    top = int(piece.bars()+1)
+    dataf = np.zeros((top*mt,ul.n_keys))
+    xc = [1]
+    #################
+    for bars,data in zip(barlist,datas):
+        x, idata = interpdata(top,bars,data,mt=mt)
+        dataf = dataf + idata
+        xc[0] = x
+    return xc[0],dataf
 
 def plot(piece : object, name : str, mt : int = 32, fgz: list = (20,8)) -> str:
     leg = ul.keys
@@ -123,21 +176,10 @@ def plot(piece : object, name : str, mt : int = 32, fgz: list = (20,8)) -> str:
     ax[0].set_ylabel("value")
     plt.suptitle(f"Elementwise Graphs for {name}")
     #################
-    response = img(fig)
+    response = ul.img(fig)
     plt.close()
     #################
-    return response
-
-def img(fig):
-    my_stringIObytes = io.BytesIO()
-    fig.savefig(my_stringIObytes, format='jpg', dpi=160)
-    my_stringIObytes.seek(0)
-    return base64.b64encode(my_stringIObytes.read())
-    # canvas=FigureCanvas(fig)
-    # response=HttpResponse(content_type='image/png')
-    # fig.savefig(response, format='png', dpi=600)
-    # return response.content
-    
+    return response    
             
 def mp3(piece,name): 
     smp.export(obj=piece,mode='mp3',action='export',filename=f'{name}.mp3')

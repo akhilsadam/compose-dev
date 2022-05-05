@@ -50,7 +50,7 @@ class analyze(MethodResource):
         resp = redis_client_raw(7).get(f'{songid}_0')
         if resp is None:
             jobs.job(["appfields", "create_eV_plots", songid]) # add job to queue with class name and method and args.
-            msg = "No plot available yet; A job was submitted. Please wait a few moments and try again ... \
+            msg = "No plot available yet; a job was submitted. Please wait a few moments and try again ... \
               If you have done so, then no such piece exists. Check route /piece for all pieces. \
               Check route /queue for job information."
             logger.error(f'{route}:{msg} - redis client did not find image...')
@@ -65,4 +65,37 @@ class analyze(MethodResource):
           # img=resp,
         )
 
+    @app.route("/analyze/value/", methods=['GET'])
+    def value() -> str:
+        """ Return emotional value (eV) information for all pieces as a single, PCA plot
+        ---
+        get:
+          description: Get eV data from Redis.
+          security:
+            - ApiKeyAuth: []
+          responses:
+            200:
+              description: Return a plot of all pieces's eV as HTML
+              content:
+                application/json:
+                  schema: HTML            
+        """
+        route = f'/analyze/value/'
+        resp = redis_client_raw(7).get('value')
+        if resp is None:
+            jobs.job(["appfields", "create_eV_plot"]) # add job to queue with class name and method and args.
+            msg = "No plot available yet; a job was submitted. Please wait a few moments and try again ... \
+              If you have done so, then no such piece exists. Check route /piece for all pieces. \
+              Check route /queue for job information."
+            logger.error(f'{route}:{msg} - redis client did not find image...')
+            return msg
+        # logger.info(f"GET : {route}")
+        byte = resp.decode("utf-8").replace("\n", "")
+        return render_template(
+          "img.jinja2",
+          img=byte,
+          id=0,
+          proxy=options.proxy
+          # img=resp,
+        )
         

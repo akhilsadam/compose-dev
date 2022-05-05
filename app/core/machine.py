@@ -19,7 +19,7 @@ def chdSpace(L=2):
     ut = u[:,:L]
     sh = np.diag(1/s)
     var = np.sum(np.power(s[:L],2))/np.sum(np.power(s,2))
-    tfm = np.matmul(np.linalg.inv(vh),sh)[:,:L]
+    tfm = np.linalg.inv(vh)[:,:L] #np.matmul(np.linalg.inv(vh),sh)[:,:L]
     # print(var)
     # print(tfm)
     return var, tfm

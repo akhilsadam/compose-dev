@@ -70,5 +70,29 @@ class appfields:
                 return f"{msg} Exited with exception: {E}"
         return "No Action Taken..."
 
-            
+    def create_eV_plot(update=False) -> str:
+        """Make an emotional value plot for all songs; the `update` boolean will regenerate generated plots if True.
+        """
+        rdr = redis_client_raw(4)
+        rd0 = redis_client(3)
+        rd = redis_client_raw(7)
+        name = f'value'
+        if (rd.get(name) is None) or update:
+            try:
+                pieces, names = [],[]
+                for key in rdr.keys():
+                    try: int(key)
+                    except: pass
+                    else:
+                        logger.info(f'Get key {key}')
+                        pieces.append(pickle.loads(rdr.get(key)))
+                        names.append(rd0.hget(key,'name'))
+                resp = element.plotPCA(pieces,names)
+                rd.set(name, resp)
+                return str(resp)[:10]
+            except Exception as E:
+                msg = "Song not available; please check back later."
+                logger.info(f"{msg} with exception:{E}")
+                return f"{msg} Exited with exception: {E}"
+        return "No Action Taken..."
 
