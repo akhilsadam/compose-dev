@@ -91,23 +91,23 @@ cubes:
 ###############
 
 images:
-	docker images | grep ${PACKAGE}
-	docker images | grep ${WORKER}
+	docker images | grep ${TACC}-${PACKAGE}
+	docker images | grep ${TACC}-${WORKER}
 
 ps:
-	docker ps -a | grep ${PACKAGE}
-	docker ps -a | grep ${WORKER}
+	docker ps -a | grep ${TACC}-${PACKAGE}
+	docker ps -a | grep ${TACC}-${WORKER}
 
 kill:
-	- docker stop data-redis
-	- docker stop ${PACKAGE}
-	- docker stop ${WORKER}
-	- docker stop ${PACKAGE}-test
+	- docker stop ${TACC}-data-redis
+	- docker stop ${TACC}-${PACKAGE}
+	- docker stop ${TACC}-${WORKER}
+	- docker stop ${TACC}-${PACKAGE}-test
 clean:
-	- docker rm data-redis
-	- docker rm ${PACKAGE}
-	- docker rm ${WORKER}
-	- docker rm ${PACKAGE}-test
+	- docker rm ${TACC}-data-redis
+	- docker rm ${TACC}-${PACKAGE}
+	- docker rm ${TACC}-${WORKER}
+	- docker rm ${TACC}-${PACKAGE}-test
 	- rm __pycache__/ -r
 	- rm app/__pycache__/ -r
 	- rm app/api/__pycache__/ -r
