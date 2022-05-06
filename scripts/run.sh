@@ -1,4 +1,4 @@
-id=`docker run -d -p 6426:6379 -v "${PWD}/redis-data:/data:rw" --name=$5-data-redis redis:6 --save 1 1`
+id=`docker run -d -p $7:6379 -v "${PWD}/redis-data:/data:rw" --name=$5-data-redis redis:6 --save 1 1`
 echo $id
 ipa=`docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "${id}"`
 echo $ipa

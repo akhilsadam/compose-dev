@@ -4,6 +4,7 @@
 NAME=akhilsadam
 TACC?=astacc
 APIPORT?=5026
+REDPORT?=6426
 
 PACKAGE=compose
 WORKER=compose-worker
@@ -126,15 +127,15 @@ build:
 
 test:
 # only test
-	sh scripts/test.sh ${NAME} ${PACKAGE} ${TAG} ${WORKER} ${TACC} ${APIPORT}
+	sh scripts/test.sh ${NAME} ${PACKAGE} ${TAG} ${WORKER} ${TACC} ${APIPORT} ${REDPORT}
 
 run:
 # only run
-	sh scripts/run.sh ${NAME} ${PACKAGE} ${TAG} ${WORKER} ${TACC} ${APIPORT}
+	sh scripts/run.sh ${NAME} ${PACKAGE} ${TAG} ${WORKER} ${TACC} ${APIPORT} ${REDPORT}
 
 testrun:
 # test and run
-	sh scripts/testrun.sh ${NAME} ${PACKAGE} ${TAG} ${WORKER} ${TACC} ${APIPORT}
+	sh scripts/testrun.sh ${NAME} ${PACKAGE} ${TAG} ${WORKER} ${TACC} ${APIPORT} ${REDPORT}
 
 push:
 	docker login docker.io
