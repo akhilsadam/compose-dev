@@ -33,7 +33,7 @@ cubecp:
 	cp deployment/template/*.yml deployment/
 
 cubereplT:
-	bash scripts/repl-deploy.sh ${TACC} 1 ${TEST} ${PRODUCTION} 1 2
+	bash scripts/repl-deploy.sh ${TACC} 1 ${TEST} ${PRODUCTION} 1 1
 
 cuberepl:
 	bash scripts/repl-deploy.sh ${TACC} 0 ${TEST} ${PRODUCTION} ${nAPI} ${nWRK}
@@ -125,15 +125,15 @@ build:
 
 test:
 # only test
-	sh scripts/test.sh ${NAME} ${PACKAGE} ${TAG} ${WORKER}
+	sh scripts/test.sh ${NAME} ${PACKAGE} ${TAG} ${WORKER} ${TACC}
 
 run:
 # only run
-	sh scripts/run.sh ${NAME} ${PACKAGE} ${TAG} ${WORKER}
+	sh scripts/run.sh ${NAME} ${PACKAGE} ${TAG} ${WORKER} ${TACC}
 
 testrun:
 # test and run
-	sh scripts/testrun.sh ${NAME} ${PACKAGE} ${TAG} ${WORKER}
+	sh scripts/testrun.sh ${NAME} ${PACKAGE} ${TAG} ${WORKER} ${TACC}
 
 push:
 	docker login docker.io
