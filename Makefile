@@ -1,8 +1,9 @@
 # Make sure your variables are correct! (The TACC variable can be any username without ,_,-, or any other fancy characters.) 
-# Note that you CAN run/deploy exactly as it is, but then my deployment and yours will fight each other (we will be starting/restarting the same kubernetes deployments.)
+# Note that you CAN run/deploy exactly as it is, but then my deployment and yours will fight each other (we will be starting/restarting the same docker/kubernetes deployments.)
 
 NAME=akhilsadam
 TACC?=astacc
+APIPORT?=5026
 
 PACKAGE=compose
 WORKER=compose-worker
@@ -125,15 +126,15 @@ build:
 
 test:
 # only test
-	sh scripts/test.sh ${NAME} ${PACKAGE} ${TAG} ${WORKER} ${TACC}
+	sh scripts/test.sh ${NAME} ${PACKAGE} ${TAG} ${WORKER} ${TACC} ${APIPORT}
 
 run:
 # only run
-	sh scripts/run.sh ${NAME} ${PACKAGE} ${TAG} ${WORKER} ${TACC}
+	sh scripts/run.sh ${NAME} ${PACKAGE} ${TAG} ${WORKER} ${TACC} ${APIPORT}
 
 testrun:
 # test and run
-	sh scripts/testrun.sh ${NAME} ${PACKAGE} ${TAG} ${WORKER} ${TACC}
+	sh scripts/testrun.sh ${NAME} ${PACKAGE} ${TAG} ${WORKER} ${TACC} ${APIPORT}
 
 push:
 	docker login docker.io
