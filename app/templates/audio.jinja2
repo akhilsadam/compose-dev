@@ -1,20 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
 
-<head style="margin: 0; height: 100%; overflow: hidden">
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>{{ title }}</title>
-  <meta property="og:site_name" content="{{ title }}"/>
-  <meta property="og:type" content="website"/>
-  <meta property="og:title" content="{{ title }} - "/>
-  <meta property="og:description" content="{{ description }}"/>
-  <meta property="og:image:width" content="1000"/>
-  <meta property="og:image:height" content="523"/>
-  <meta name="HandheldFriendly" content="True" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  {% include 'analyticsHEAD.jinja2' %}
-    <script type="module">
+{% extends "base.jinja2" %}
+
+{% block headcontent %}
+<script type="module">
     import lottieWeb from 'https://cdn.skypack.dev/lottie-web';
 
 class AudioPlayer extends HTMLElement {
@@ -236,9 +224,9 @@ customElements.define('audio-player', AudioPlayer);
             audio.pause();
         }
     </script>
-</head>
+{% endblock %}
 
-<body class="audio" style="margin: 0; height: 100%;">
+{% block content %}
 <template>
         <style>
             button {
@@ -427,6 +415,5 @@ customElements.define('audio-player', AudioPlayer);
     </template>
     </br>
     <audio-player data-src={{piece}}></audio-player>
-</body>
 
-</html>
+{% endblock %}

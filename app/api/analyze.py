@@ -3,7 +3,7 @@ import os
 from itsdangerous import base64_encode
 
 import redis
-from flask import Blueprint, jsonify, render_template
+from flask import Blueprint, jsonify, render_template, redirect
 from flask import current_app as app
 from flask import request as rq
 import requests as rqs
@@ -25,7 +25,7 @@ from app.redisclient import redis_client_raw
 # IMPORTANT: any non-route methods should not be in the class!
 class analyze(MethodResource):
 
-    @app.route("/analyze/value/<int:songid>/", methods=['GET'])
+    @app.route("/analyze/value/<int:songid>/", methods=['GET','POST'])
     def value_single(songid : int) -> str:
         """ Return emotional value (eV) information for piece as plot
         ---
@@ -44,9 +44,17 @@ class analyze(MethodResource):
               description: Return a single piece's eV plot as HTML
               content:
                 application/json:
-                  schema: HTML            
+                  schema: HTML   
+        post:
+          description: Update eV plot for selected piece.
+          responses:
+            201:
+              description: Redirect url to GET request for this url          
         """
         route = f'/analyze/value/{songid}/'
+        if rq.method == 'POST':
+            jobs.job(["appfields", "create_eV_plots", songid, True])
+            return redirect(route)
         resp = redis_client_raw(7).get(f'{songid}_0')
         if resp is None:
             jobs.job(["appfields", "create_eV_plots", songid]) # add job to queue with class name and method and args.
@@ -59,14 +67,15 @@ class analyze(MethodResource):
         byte = resp.decode("utf-8").replace("\n", "")
         return render_template(
           "img.jinja2",
+          template='audio',
           img=byte,
           id=songid,
           proxy=options.proxy
           # img=resp,
         )
 
-    @app.route("/analyze/value/", methods=['GET'])
-    def value() -> str:
+    @app.route("/analyze/PCA/emotion/", methods=['GET','POST'])
+    def pca_ev() -> str:
         """ Return emotional value (eV) information for all pieces as a single, PCA plot
         ---
         get:
@@ -75,15 +84,18 @@ class analyze(MethodResource):
             - ApiKeyAuth: []
           responses:
             200:
-              description: Return a plot of all pieces's eV as HTML
+              description: Return a 2D chordspace plot of all pieces's eV as HTML
               content:
                 application/json:
                   schema: HTML            
         """
-        route = f'/analyze/value/'
+        route = '/analyze/PCA/emotion/'
+        if rq.method == 'POST':
+            jobs.job(["appfields", "create_eV_plot", -1, True]) 
+            return redirect(route)
         resp = redis_client_raw(7).get('value')
         if resp is None:
-            jobs.job(["appfields", "create_eV_plot"]) # add job to queue with class name and method and args.
+            jobs.job(["appfields", "create_eV_plot", -1]) # add job to queue with class name and method and args.
             msg = "No plot available yet; a job was submitted. Please wait a few moments and try again ... \
               If you have done so, then no such piece exists. Check route /piece for all pieces. \
               Check route /queue for job information."
@@ -92,10 +104,45 @@ class analyze(MethodResource):
         # logger.info(f"GET : {route}")
         byte = resp.decode("utf-8").replace("\n", "")
         return render_template(
-          "img.jinja2",
+          "img2.jinja2",
+          template='img',
           img=byte,
-          id=0,
-          proxy=options.proxy
+          # img=resp,
+        )
+
+    @app.route("/analyze/PCA/emotion/<int:songid>/", methods=['GET','POST'])
+    def pca_ev_single(songid : int) -> str:
+        """ Return emotional value (eV) information for a single piece as a PCA plot using chordspace
+        ---
+        get:
+          description: Get eV data from Redis.
+          security:
+            - ApiKeyAuth: []
+          responses:
+            200:
+              description: Return a 2D chordspace plot of a single piece's eV as HTML
+              content:
+                application/json:
+                  schema: HTML            
+        """
+        route = f'/analyze/PCA/emotion/{songid}/'
+        if rq.method == 'POST':
+            jobs.job(["appfields", "create_eV_plot", songid, True]) 
+            return redirect(route)
+        resp = redis_client_raw(7).get(f'value_{songid}')
+        if resp is None:
+            jobs.job(["appfields", "create_eV_plot",songid]) # add job to queue with class name and method and args.
+            msg = "No plot available yet; a job was submitted. Please wait a few moments and try again ... \
+              If you have done so, then no such piece exists. Check route /piece for all pieces. \
+              Check route /queue for job information."
+            logger.error(f'{route}:{msg} - redis client did not find image...')
+            return msg
+        # logger.info(f"GET : {route}")
+        byte = resp.decode("utf-8").replace("\n", "")
+        return render_template(
+          "img2.jinja2",
+          template='img',
+          img=byte,
           # img=resp,
         )
         

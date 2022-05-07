@@ -32,7 +32,7 @@ except NameError:
 def load(midi):
     return mp.read(midi),pretty_midi.PrettyMIDI(midi)
 
-def analyze(chord,width=5):
+def analyze(chord,width=1):
 
     chordNames = chord.chord_analysis(get_original_order=True)
     chords = chord.chord_analysis(get_original_order=True,mode='chords')
@@ -82,9 +82,9 @@ def _plot2(ax,x,data):
         ax.plot(x, data[:, k], c=ul.cs[k])
         leg.append(ul.keys[k])
         
-def plotPCA(pieces : list, names : list, fgz: list = (16,16)) -> str:
-    var,tfm = mx.chdSpace()
+def plotPCA(var,tfm,relations,pieces : list, names : list, fgz: list = (16,16)) -> str:
     ys = []
+    plt.rcParams.update({'font.size': 16})
     for piece in pieces:
         _, yun = get_data(piece)
         y = np.matmul(yun,tfm)
@@ -94,28 +94,9 @@ def plotPCA(pieces : list, names : list, fgz: list = (16,16)) -> str:
     for i in range(len(pieces)):
         plt.scatter(ys[i][:,0],ys[i][:,1])
     plt.legend(names)
-    plt.xlabel('Principal Component #1 (of chords)')
-    plt.ylabel('Principal Component #2 (of chords)')
-    plt.title(f'Pieces as a Distribution on a 2D PC Space \n(explains {int(1000*var)/10}% of the variance)')
-    response = ul.img(fig)
-    plt.close()
-    return response
-        
-def plotPCA2(pieces : list, names : list, fgz: list = (16,16)) -> str:
-    var,tfm = mx.chdSpace()
-    ys = []
-    for piece in pieces:
-        _, yun = get_data(piece)
-        y = np.matmul(yun,tfm)
-        # logger.info(f'PCA shape: {y.shape}')
-        ys.append(y)
-    fig = plt.figure(figsize = fgz)
-    for i in range(len(pieces)):
-        plt.scatter(np.mean(ys[i][:,0]),np.mean(ys[i][:,1]))
-    plt.legend(names)
-    plt.xlabel('Principal Component #1')
-    plt.ylabel('Principal Component #2')
-    plt.title(f'Pieces as a Point on a 2D PC Space \n(explains {int(1000*var)/10}% of the variance)')
+    plt.xlabel(f'Principal Component #1 - {relations[0]}')
+    plt.ylabel(f'Principal Component #2 - {relations[1]}')
+    plt.title(f'Pieces as a Distribution on a 2D PC Space \n(explains {int(1000*float(var))/10}% of the variance in chordspace)')
     response = ul.img(fig)
     plt.close()
     return response
@@ -139,6 +120,7 @@ def get_data(piece : object, mt : int = 32) -> list:
     return xc[0],dataf
 
 def plot(piece : object, name : str, mt : int = 32, fgz: list = (20,8)) -> str:
+    plt.rcParams.update({'font.size': 12})
     leg = ul.keys
     fig,ax = plt.subplots(2,1,figsize=fgz,sharex=True)
     gs = mpl.gridspec.GridSpec(nrows=2,ncols=1)

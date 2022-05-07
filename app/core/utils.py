@@ -9,7 +9,7 @@ import jpcm
 plt.switch_backend(backend)
 import io,base64
 
-keys = ['fear', 'anger', 'trust', 'surprise', 'positive', 'negative', 'sadness', 'disgust', 'joy', 'anticipation']
+keys = np.array(['fear', 'anger', 'trust', 'surprise', 'positive', 'negative', 'sadness', 'disgust', 'joy', 'anticipation'])
 cs = [jpcm.maps.murasaki,jpcm.maps.nakabeni,jpcm.maps.chigusa_iro,jpcm.maps.shinshu,jpcm.maps.sora_iro,jpcm.maps.kokushoku,
       jpcm.maps.benihibata,jpcm.maps.omeshi_onando,jpcm.maps.tomorokoshi_iro,jpcm.maps.enji_iro]
 n_keys = len(keys)

@@ -29,8 +29,6 @@ class piece(MethodResource):
         ---
         post:
           description: Create examples.
-          security:
-            - ApiKeyAuth: []
           responses:
             201:
               description: Update Redis database with examples
