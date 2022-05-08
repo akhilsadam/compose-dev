@@ -61,19 +61,20 @@ import musicpy as mp
 ]
 """
 
+class chdprogress:
 
-def convert_to_mp(chp : list, bpm : float=130, name: str='Progression 0') -> mp.piece:
-    """Convert a song from JSON (really list of dictionaries) to a musicpy object
+    def convert_to_mp(chp : list, bpm : float=130, name: str='Progression 0') -> mp.piece:
+        """Convert a song from JSON (really list of dictionaries) to a musicpy object
 
-    Args:
-        chp (list): _description_
-        bpm (float): BPM to play the song at.
+        Args:
+            chp (list): _description_
+            bpm (float): BPM to play the song at.
 
-    Returns:
-        mp.piece: musicpy piece from song
-    """
-    chord = [mp.C(i['chd']) % (i['time'], i['arp']) for i in chp]
-    inst = [i['inst'] for i in chp]
-    start = [i['start'] for i in chp]
-    bpm, chdnotes, _ = mp.piece(chord,inst,bpm,start,['0']*len(chord)).merge()
-    return mp.build(mp.track(chdnotes),bpm=bpm,name=name)
+        Returns:
+            mp.piece: musicpy piece from song
+        """
+        chord = [mp.C(i['chd']) % (i['time'], i['arp']) for i in chp]
+        inst = [i['inst'] for i in chp]
+        start = [i['start'] for i in chp]
+        bpm, chdnotes, _ = mp.piece(chord,inst,bpm,start,['0']*len(chord)).merge()
+        return mp.build(mp.track(chdnotes),bpm=bpm,name=name)

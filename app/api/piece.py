@@ -14,6 +14,8 @@ logger = logging.getLogger('root')
 
 from app.options import options
 from app.schema import *
+from app.redisclient import redis_client,redis_client_raw
+
 
 from app.queue.jobs import jobs
 from app.shaft import access
@@ -21,7 +23,10 @@ from app.shaft import access
 # IMPORTANT: any non-route methods should not be in the class!
 class piece(MethodResource):
 
-    loaded = False      
+    loaded = False     
+
+    rd3 = redis_client(3) # for generic data
+    rd4 = redis_client_raw(4) # for musicpy objects 
 
     @app.route("/init", methods=['POST'])
     def init() -> str:
@@ -42,6 +47,8 @@ class piece(MethodResource):
         else:
             return "Submitted Initialization Job."
 
+    ################## CREATE/READ/UPDATE/DELETE methods ###########################
+    # GET Single
     @app.route("/piece/<int:songid>/", methods=['GET'])
     def piece_single(songid : int) -> str:
         """ Return a piece as JSON
@@ -74,6 +81,7 @@ class piece(MethodResource):
         
         return jsonify(out)
 
+    # GET All
     @app.route("/piece/", methods=['GET'])
     def piece_all() -> str:
         """ Return a list of all available pieces as JSON
@@ -106,6 +114,35 @@ class piece(MethodResource):
         out = access.get_pieces()[st:]
         print(out)
         return jsonify(out)
+
+
+    # UPDATE / DELETE
+    # update a song by replacing it with a user-uploaded version
+    # delete a specific song from the songbank
+    @app.route("/piece/<int:songid>/DELETE", methods=['POST'])
+    def piece_delete(songid : int):
+        """
+        Takes a song id and deletes that song from the songbank.
+        --- 
+        post:
+          description: Delete a song from the songbank.
+          responses:
+            201:
+              description: A confirmation message.          
+        """
+        # n_keys = len(piece.rd3.keys())
+        # for i in range(n_keys):
+        #     to_delete = piece.rd3.get(str(i))
+        #     delName = to_delete['name']
+        #     if( delName.lower() == name.lower()):
+        try:
+            piece.rd3.remove(f'{songid}')
+        except Exception as E:
+            return f'Song not in database. Exception: {E}'
+        return 'Successfully deleted.'
+        
+
+    ############## play route #######################
 
     @app.route("/play/<int:songid>/", methods=['GET'])
     def play(songid : int) -> str:
