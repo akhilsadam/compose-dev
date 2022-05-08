@@ -115,6 +115,38 @@ class piece(MethodResource):
         print(out)
         return jsonify(out)
 
+    #GET bpm
+    @app.route("/piece/<int:songid>/bpm/", methods=['GET'])
+    def piece_bpm(songid : int) -> str:
+        """Return the beats per minute (BPM) of a piece as JSON
+        ---
+        get:
+          description: Get piece's BPM data from Redis.
+          security:
+            - ApiKeyAuth: []
+          parameters:
+          - name: songid
+            in: path
+            description: Index (int) select from for the data list.
+            required: true
+            example: 0
+          responses:
+            200:
+              description: Return a piece's BPM data as JSON
+              content:
+                application/json:
+                  schema: JSON
+        """
+        route = f'/piece/{songid}/bpm/'
+        try:
+            out =  access.get_pieces()[songid]["bpm"]
+        except:
+            msg = "Invalid SongID parameter. Please input an integer in range."
+            logger.error(f'{route}:{msg} had exception {E}')
+            return msg
+        # logger.info(f"GET : {route}")
+
+        return jsonify(out)
 
     # UPDATE / DELETE
     # update a song by replacing it with a user-uploaded version
