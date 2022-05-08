@@ -22,6 +22,26 @@ def get_pieces():
 #     pygame.mixer.init(44100, -16,2,2048)
 #     mp.play(obj)
 
+def hrename(db,key0, key1):
+    rd = redis_client(db)
+    try:
+        mapping = rd.hgetall(key0)
+        rd.hset(key1,mapping=mapping)
+    except Exception as e:
+        logger.critical(f"Redis hrename failed with exception : {e}")
+    else:
+        rd.hdel(key0,*mapping.keys())
+        
+def rename_raw(db,key0, key1):
+    rd = redis_client_raw(db)
+    try:
+        value = rd.get(key0)
+        rd.set(key1,value)
+    except Exception as e:
+        logger.critical(f"Redis rename failed with exception : {e}")
+    else:
+        rd.delete(key0)
+
 def n_piece():
     return len(redis_client(3).keys())
     

@@ -59,7 +59,7 @@ class appfields:
         rd = redis_client_raw(7)
         name = f'{id}_0'
         if update:
-            rd.set(name, None)
+            rd.delete(name)
         if rd.get(name) is None:
             try:
                 piece = pickle.loads(rdr.get(id))
@@ -84,7 +84,7 @@ class appfields:
         rdr2 = redis_client_raw(2)
         name = f'value_{i}' if i >=0 else 'value'
         if update:
-            rd.set(name, None)
+            rd.delete(name)
         if rd.get(name) is None:
             try:
                 pieces, names = [],[]

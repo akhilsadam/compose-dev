@@ -7,7 +7,7 @@ webargs
 redis
 requests
 Jinja2==3.0.1
-flask-apispec==0.11.0
+flask-apispec==0.10.0
 hotqueue
 uuid
 python-dotenv
@@ -17,7 +17,7 @@ jpcm
 pynverse
 colour_science
 pytest
-musicpy==5.17
+musicpy
 scipy
 nrclex
 pretty_midi

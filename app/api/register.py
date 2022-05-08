@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, render_template
+from flask import Blueprint, jsonify, render_template, redirect
 from flask import current_app as app
 from flask import request as rq
 
@@ -12,27 +12,34 @@ logger = logging.getLogger('root')
 import requests as rqs
 import json as js
 import numpy as np
+import markdownify as md
 
 from app.options import options
 
 # Not pytesting the following functions as 1) testing the requests is unecessary, 2) this is not core functionality and is not required by the specifications,
 # 3) this is an API test in and of itself, and part of other tests, 4) developer exhaustion...
 
-def capture(url, type=0, appcontext=None) -> dict:
-  """Parses JSON from an endpoint.
+# this is an api-side request since it really has nothing to do with the application, and is fast enough of a site scraper. 
+# (one could make an equivalent argument that it should be worker-side if completely full-fleshed responses are required --- like all the images..)
+
+def capture(url, type=0, appcontext=None, htm=False) -> object:
+  """Parses JSON/HTML from an endpoint.
   Args:
       url (str): A string containing the endpoint URL.
       type (int): GET or POST endpoint?
       appcontext (object): None if not testing.
+      htm (bool): flag to set True if endpoint is HTML.
   Returns:
       dict: the Python dictionary version of the input url JSON.
+      OR 
+      str:  a HTML string version of the input url.
   """
   data = lambda x,appcontext: x.data if appcontext is not None else x.content
   decode = lambda x,appcontext: js.loads(data(x,appcontext).decode('utf8').replace("'", '"'))
 
   rqx = rqs if appcontext is None else appcontext
   cap = rqx.get(url) if type==0 else rqx.post(url)
-  out = decode(cap,appcontext)
+  out = data(cap,appcontext).decode('utf8').replace("'", '"') if htm else decode(cap,appcontext)
   logger.info(out)
   return out
 
@@ -62,7 +69,7 @@ def callresponse(i,k,path,values,io,rest,denylist,appcontext) -> list:
     # logger.info(call)
   else:
     call = path
-  url = f"{options.baseurl}{call}"
+  url = f"{options.getURL()}{call}"
   io[i,4] = f"`curl -X {rest} {url} -H \"accept: application/json\"`"
   logger.info(f"CALL:{url}")
 
@@ -70,8 +77,13 @@ def callresponse(i,k,path,values,io,rest,denylist,appcontext) -> list:
     try:
       rawstringjs = js.dumps(capture(url,k,appcontext), indent=4, sort_keys=True)
     except Exception as e:
-      rawstringjs = "API CALL FAILED"
-      state = 1
+      try: # assume HTML instead
+        rawstringjs = md.markdownify(capture(url,k,appcontext,htm=True), heading_style="ATX")
+      except Exception as e:
+        msg = "API CALL FAILED"
+        logger.warn(f"{msg} : {url} | {e}")
+        rawstringjs = msg
+        state = 1
     logger.info(rawstringjs)
     segmented = rawstringjs.split("\n")
     lox = len(segmented)
@@ -98,7 +110,8 @@ def generateAPI(api,test=False,badvalues=False,appcontext=None) -> np.ndarray:
     badvalues (bool): Use bad values for testing?
     appcontext (object): None if not testing?
   Returns:
-    array: a NumPy array structure containing endpoints, descriptions, parameter names&descriptions, response descriptions, example input calls, example outputs.
+    array: a NumPy array structure containing endpoints, descriptions, parameter names&descriptions, response descriptions, example input calls, example outputs. 
+      If test is true, then only the outputs are returned.
   """
   REST = ["get","post"]
   REST2 = ["GET","POST"]
@@ -162,7 +175,8 @@ def generateAPI(api,test=False,badvalues=False,appcontext=None) -> np.ndarray:
     if test:
       if badvalues: 
         state = 1-state
-      exa[i] = (path,state,js.loads(rawstringjs))
+      try: exa[i] = (path,state,js.loads(rawstringjs))
+      except Exception: exa[i] = (path,state,rawstringjs)
 
   if test:
     return exa
@@ -230,3 +244,39 @@ class register(MethodResource):
             msg = "Generated Examples."
             logger.info(f'{route}:{msg}')
         return markdown
+      
+    @app.route("/flask-apispec/static/<string:item>", methods=['GET'])
+    def apis(item) -> str:
+        """A redirect for missing SwaggerUIBundle
+        ---
+        get:
+          description: Get SwaggerUIBundle item as necessary
+          security:
+            - ApiKeyAuth: []
+          responses:
+            200:
+              description: Return SwaggerUIBundle url redirect
+              content:
+                application/json:
+                  schema: HTML
+        """
+        route="/static/swagger-ui/"
+        return redirect(f'{options.proxy}{route}{item}')
+
+    @app.route("/swagger-ui-bundle.js", methods=['GET'])
+    def apistwo() -> str:
+        """Another redirect for missing SwaggerUIBundle
+        ---
+        get:
+          description: Get SwaggerUIBundle item as necessary
+          security:
+            - ApiKeyAuth: []
+          responses:
+            200:
+              description: Return SwaggerUIBundle url redirect
+              content:
+                application/json:
+                  schema: HTML
+        """
+        route="/static/swagger-ui/swagger-ui-bundle.js"
+        return redirect(f'{options.proxy}{route}')

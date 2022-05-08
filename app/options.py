@@ -11,12 +11,12 @@ class options:
     readmelink = "https://github.com/akhilsadam/compose"
     template = "templates/"
 
-    def sethost(host):
+    def sethost(rhost):
         """Set Redis host ip address
         Args:
-            host (str): ip address
+            rhost (str): ip address
         """
-        options.redhost=host
+        options.redhost=rhost
 
     def setproxy(pxy):
         """Set nginx proxy ip address
@@ -25,3 +25,12 @@ class options:
         """
         options.proxy=f"/{pxy}"
         options.baseurl = f"http://{options.host}:{options.port}{options.proxy}"
+    
+    def getURL():
+        """Get baseurl for documentation generator
+        Return:
+            str : baseurl
+        """
+        if options.host == "0.0.0.0":
+            return f"http://localhost:{options.port}{options.proxy}"
+        return options.baseurl

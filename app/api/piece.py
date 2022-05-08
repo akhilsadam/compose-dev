@@ -63,6 +63,8 @@ class piece(MethodResource):
             description: Index (int) select from for the data list.
             required: true
             example: 0
+            schema:
+              type: number
           responses:
             200:
               description: Return a single piece data as JSON
@@ -96,6 +98,8 @@ class piece(MethodResource):
             description: Index (int) to start from for the data list.
             required: false
             example: 0
+            schema:
+              type: number
           responses:
             200:
               description: Return all piece data as JSON
@@ -116,30 +120,83 @@ class piece(MethodResource):
         return jsonify(out)
 
 
-    # UPDATE / DELETE
+    # UPDATE
     # update a song by replacing it with a user-uploaded version
-    # delete a specific song from the songbank
-    @app.route("/piece/<int:songid>/DELETE", methods=['POST'])
-    def piece_delete(songid : int):
+    @app.route("/piece/<int:songid>/UPDATE", methods=['POST'])
+    def piece_update(songid : int):
         """
-        Takes a song id and deletes that song from the songbank.
+        Replaces a song-data object in the songbank with its user-given namesake.
         --- 
         post:
-          description: Delete a song from the songbank.
+          description: Update a song in the songbank.
+          parameters:
+          - name: songid
+            in: path
+            description: Index of song to update in songbank.
+            required: true
+            example: 1
+            schema:
+              type: number
           responses:
             201:
-              description: A confirmation message.          
+              description: Return a confirmation message stating that the update was a success.         
         """
         # n_keys = len(piece.rd3.keys())
         # for i in range(n_keys):
         #     to_delete = piece.rd3.get(str(i))
         #     delName = to_delete['name']
         #     if( delName.lower() == name.lower()):
+        route = f'/piece/{songid}/UPDATE'
         try:
-            piece.rd3.remove(f'{songid}')
+            piece.rd3.delete(f'{songid}')
         except Exception as E:
-            return f'Song not in database. Exception: {E}'
-        return 'Successfully deleted.'
+            msg = 'Song not in database.'
+            logger.error(f'{route}:{msg}. Exception: {E}.')
+            return msg
+        return 'Successfully updated.'
+      
+    # DELETE
+    # delete a specific song from the songbank
+    # unfortunately an O(n) operation, since otherwise we would have 'empty' key problems
+    # Would be better to have a list-style structure in Redis, but unfortunately that is not possible 
+    # (note not referring to a list object, but rather a list access over a dict key-based access for Redis)
+    # @app.route("/piece/<int:songid>/DELETE", methods=['POST'])
+    # def piece_delete(songid : int):
+    #     """
+    #     Takes a song id and deletes that song from the songbank.
+    #     --- 
+    #     post:
+    #       description: Delete a song from the songbank.
+    #       parameters:
+    #       - name: songid
+    #         in: path
+    #         description: Index of song to delete from songbank.
+    #         required: true
+    #         example: 0
+    #         schema:
+    #           type: number
+    #       responses:
+    #         201:
+    #           description: Return a deletion confirmation message.          
+    #     """
+    #     # n_keys = len(piece.rd3.keys())
+    #     # for i in range(n_keys):
+    #     #     to_delete = piece.rd3.get(str(i))
+    #     #     delName = to_delete['name']
+    #     #     if( delName.lower() == name.lower()):
+    #     route = f'/piece/{songid}/DELETE'
+    #     try:
+    #         # piece.rd3.delete(songid)
+    #         # piece.rd4.delete(songid)
+    #         for key in range(songid,access.n_piece()-1):
+    #             # all later keys - push up - cannot be parallelized at the moment.
+    #             access.hrename(3,key+1,key)
+    #             access.rename_raw(4,key+1,key)
+    #     except Exception as E:
+    #         msg = 'Song not in database.'
+    #         logger.error(f'{route}:{msg}. Exception: {E}.')
+    #         return msg
+    #     return 'Successfully deleted.'
         
 
     ############## play route #######################
@@ -155,9 +212,11 @@ class piece(MethodResource):
           parameters:
           - name: songid
             in: path
-            description: Index (int) select from for the data list.
+            description: Index of song to play from songbank.
             required: true
             example: 0
+            schema:
+              type: number
           responses:
             200:
               description: Play a piece.

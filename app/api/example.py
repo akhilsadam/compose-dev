@@ -67,10 +67,12 @@ class example(MethodResource):
             - ApiKeyAuth: []
           parameters:
           - name: start
-            in: path
+            in: query
             description: Index (int) to start from for the data list.
             required: false
             example: 0
+            schema:
+              type: number
           responses:
             200:
               description: Return API HTML

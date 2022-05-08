@@ -30,7 +30,7 @@ class analyze(MethodResource):
         """ Return emotional value (eV) information for piece as plot
         ---
         get:
-          description: Get eV data from Redis.
+          description: Get eV data and return plot.
           security:
             - ApiKeyAuth: []
           parameters:
@@ -39,14 +39,24 @@ class analyze(MethodResource):
             description: Index (int) select from for the data list.
             required: true
             example: 0
+            schema:
+              type: number
           responses:
             200:
-              description: Return a single piece's eV plot as HTML
+              description: Return a single piece (eV) plot as HTML
               content:
                 application/json:
                   schema: HTML   
         post:
           description: Update eV plot for selected piece.
+          parameters:
+          - name: songid
+            in: path
+            description: Index (int) select from for the data list.
+            required: true
+            example: 0
+            schema:
+              type: number
           responses:
             201:
               description: Redirect url to GET request for this url          
@@ -54,7 +64,7 @@ class analyze(MethodResource):
         route = f'/analyze/value/{songid}/'
         if rq.method == 'POST':
             jobs.job(["appfields", "create_eV_plots", songid, True])
-            return redirect(route)
+            return redirect(f'{options.proxy}{route}')
         resp = redis_client_raw(7).get(f'{songid}_0')
         if resp is None:
             jobs.job(["appfields", "create_eV_plots", songid]) # add job to queue with class name and method and args.
@@ -84,7 +94,7 @@ class analyze(MethodResource):
             - ApiKeyAuth: []
           responses:
             200:
-              description: Return a 2D chordspace plot of all pieces's eV as HTML
+              description: Return a 2D chordspace plot of all pieces (the eV) as HTML
               content:
                 application/json:
                   schema: HTML            
@@ -92,7 +102,7 @@ class analyze(MethodResource):
         route = '/analyze/PCA/emotion/'
         if rq.method == 'POST':
             jobs.job(["appfields", "create_eV_plot", -1, True]) 
-            return redirect(route)
+            return redirect(f'{options.proxy}{route}')
         resp = redis_client_raw(7).get('value')
         if resp is None:
             jobs.job(["appfields", "create_eV_plot", -1]) # add job to queue with class name and method and args.
@@ -118,17 +128,38 @@ class analyze(MethodResource):
           description: Get eV data from Redis.
           security:
             - ApiKeyAuth: []
+          parameters:
+          - name: songid
+            description: Index (int) of song to plot.
+            in: path
+            required: true
+            example: 0
+            schema:
+              type: number
           responses:
             200:
-              description: Return a 2D chordspace plot of a single piece's eV as HTML
+              description: Return a 2D chordspace plot of a single piece eV as HTML
               content:
                 application/json:
-                  schema: HTML            
+                  schema: HTML      
+        post:
+          description: Update eV-PCA plot for selected piece.
+          parameters:
+          - name: songid
+            description: Index (int) of song to plot.
+            in: path
+            required: true
+            example: 0
+            schema:
+              type: number
+          responses:
+            201:
+              description: Redirect url to GET request for this url        
         """
         route = f'/analyze/PCA/emotion/{songid}/'
         if rq.method == 'POST':
             jobs.job(["appfields", "create_eV_plot", songid, True]) 
-            return redirect(route)
+            return redirect(f'{options.proxy}{route}')
         resp = redis_client_raw(7).get(f'value_{songid}')
         if resp is None:
             jobs.job(["appfields", "create_eV_plot",songid]) # add job to queue with class name and method and args.

@@ -30,10 +30,12 @@ class queue:
           - ApiKeyAuth: []
         parameters:
         - name: start
-          in: path
+          in: query
           description: Job Index (int) in time to start from for the data list.
           required: false
           example: 0
+          schema:
+              type: number
         responses:
           200:
             description: Return all queued job data as JSON

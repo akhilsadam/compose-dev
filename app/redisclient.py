@@ -32,18 +32,21 @@ def redis_client_raw(dbi):
 
 def redis_hget(db):
     rd = redis_client(db)
-    out = [rd.hgetall(key) for key in rd.keys()]
+    s = sorted(rd.keys())
+    out = [rd.hgetall(key) for key in s]
     # logger.info(rd.keys())
     return out
 
 def redis_get_raw(db):
     rd = redis_client_raw(db)
-    out = [rd.get(key) for key in rd.keys()]
+    s = sorted(rd.keys())
+    out = [rd.get(key) for key in s]
     # logger.info(rd.keys())
     return out
 
 def redis_get(db):
     rd = redis_client(db)
-    out = [rd.get(key) for key in rd.keys()]
+    s = sorted(rd.keys())
+    out = [rd.get(key) for key in s]
     # logger.info(rd.keys())
     return out
