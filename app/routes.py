@@ -1,7 +1,9 @@
 """Routes for Flask app."""
 import os
-from flask import Blueprint, current_app as app
+
+from flask import Blueprint, current_app as app, request as rq
 from flask import render_template
+import requests as rqs
 
 from app.options import options
 
@@ -12,7 +14,7 @@ from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin
 from apispec_webframeworks.flask import FlaskPlugin
 from flask_apispec.extension import FlaskApiSpec
-
+from functools import lru_cache
 from app.schema import * #schema
 
 @app.route("/", methods=['GET'])
@@ -89,22 +91,39 @@ def pdf():
         template="home-template",
     )
 
-# @app.route("/api/doc", methods=['GET'])
-# def pdf():
-#     """Application API Reference.
-#     ---
-#     get:
-#       description: Get API documentation
-#       security:
-#         - ApiKeyAuth: []
-#       responses:
-#         200:
-#           description: Return API documentation
-#           content:
-#             application/json:
-#               schema: HTML
-#     """
-#     return 
+@lru_cache(maxsize=1)
+def proxyAPI():
+    """One-time function to get, update, and return links in API html
+    Returns:
+        str: replaced HTML
+    """
+    headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36',
+    'Content-Type': 'text/html',
+    }
+    htm = rqs.get(f"{options.getURL()}/api/local",headers=headers).text
+    return htm.replace("/flask-apispec",f"{options.proxy}/flask-apispec").replace("<title>Swagger UI</title>","<title>Proxy-Modified Swagger UI</title>")
+
+@app.route("/api", methods=['GET'])
+def swagger() -> str:
+    """
+    Application api (Swagger Proxy workaround)
+    ---
+    get:
+      description: Get API as HTML page
+      security:
+        - ApiKeyAuth: []
+      responses:
+        200:
+          description: Return API HTML
+          content:
+            application/json:
+              schema: HTML
+    """
+    try: 
+        return proxyAPI()
+    except Exception as E:
+        return f"API Generation Failed with exception {E}"
 
 app.config.update({
     'APISPEC_SPEC': APISpec(
@@ -114,14 +133,15 @@ app.config.update({
         plugins=[FlaskPlugin(), MarshmallowPlugin()],
     ),
     'APISPEC_SWAGGER_URL': '/api/api.json',
-    'APISPEC_SWAGGER_UI_URL': '/api',
+    'APISPEC_SWAGGER_UI_URL': '/api/local'
 })
+
 docs = FlaskApiSpec(app)
 
 docs.register(home)
 docs.register(pdf)
 docs.register(api)
-
+docs.register(swagger)
 ### EVENT REGISTRATION | PLEASE LINE UP BY CLASS ###
 
 denylist = ['__pyc','__init','test','schema']
