@@ -102,7 +102,7 @@ def proxyAPI():
     'Content-Type': 'text/html',
     }
     htm = rqs.get(f"{options.getURL()}/api/local",headers=headers).text
-    return htm.replace("/flask-apispec",f"{options.proxy}/flask-apispec").replace("<title>Swagger UI</title>","<title>Proxy-Modified Swagger UI</title>")
+    return htm.replace("/flask-apispec",f"{options.proxy}/flask-apispec").replace("/api/api.json",f"{options.proxy}/api/api.json").replace("<title>Swagger UI</title>","<title>Proxy-Modified Swagger UI</title>")
 
 @app.route("/api", methods=['GET'])
 def swagger() -> str:
