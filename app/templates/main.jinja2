@@ -1,0 +1,48 @@
+{% extends "index.jinja2" %}
+
+{% block extra %}
+<div style="display: flex;  flex-direction: row; height: 650px !important;">
+    <div style="width: 0.5%; height: 100%;"></div>
+    <div style="width: 40.5%; position: relative;">
+        <div style="width: 100%; height: 300px;">
+            <h1>&nbsp&nbsp&nbsp&nbspSpotlight</h1>
+            <h3 style="text-align: right;">
+                <a href="{{proxy}}/songbank" class="dash-link">
+                    songbank controls
+                    <i class="fa-solid fa-sliders"></i>
+                </a>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+            </h3>
+            <h3 style="text-align: right;">
+                <a href="{{proxy}}/analyze/value/0/" class="dash-link">
+                    Analysis Route Example 1 for Song 0
+                    <i class="fa-solid fa-chart-line"></i>
+                </a>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+            </h3>
+            <h3 style="text-align: right;">
+                <a href="{{proxy}}/analyze/PCA/emotion/0/" class="dash-link">
+                    Analysis Route Example 2 for Song 0
+                    <i class="fa-solid fa-chart-bar"></i>
+                </a>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+            </h3>
+            <h1>&nbsp&nbsp&nbsp&nbspAPI</h1>
+        </div>
+        <div style="background: black; width: 100%; height: 350px; z-index: 5; position: absolute; top:300px;"></div>
+        <iframe allowtransparency="true" class="emapi" id="emapi" type="text/html" src="{{proxy}}{{ apilink }}" style="width: 100%; height: 350px; z-index: 12; position: absolute; top:300px;"></iframe>
+    </div>
+    <div style="width: 0.5%; height: 100%;"></div>
+    <div style="width: 30%; height: 100%;">
+        <h1>&nbsp&nbspsongs</h1>
+        <embed type="text/html" src="{{proxy}}/piece" style="width: 100%; height: 100%;">
+    </div>
+    <div style="width: 0.5%; height: 100%;"></div>
+    <div style="width: 30%; height: 100%;">
+        <h1>&nbsp&nbspjobs</h1>
+        <embed type="text/html" src="{{proxy}}/queue" style="width: 100%; height: 100%;">
+    </div>
+    <div style="width: 0.5%; height: 100%;"></div>
+</div>
+{% endblock %}
+
+{% block content2 %}
+{% include 'analyticsAPI.jinja2' %}
+{% endblock %}

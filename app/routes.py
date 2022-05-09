@@ -31,12 +31,13 @@ def home():
               schema: HTML
     """
     return render_template(
-        "index.jinja2",
+        "main.jinja2",
         title=options.appname,
         description="",
         template="home-template",
         proxy=options.proxy,
         readmelink = options.readmelink,
+        apilink = "/api"
     )
 
 @app.route("/api/doc", methods=['GET'])

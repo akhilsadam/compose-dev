@@ -1,0 +1,62 @@
+{% extends "layout.jinja2" %}
+
+{% block content %}
+<style>
+input[type='radio'] {
+  box-sizing: border-box;
+  appearance: none;
+  background: white;
+  outline: 2px solid #333;
+  border: 3px solid white;
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+input[type='radio']:checked {
+  background: #333;
+}
+.container{
+margin-top: 0px !important; 
+margin-left: 10px !important;
+margin-right: 10px !important;
+margin-bottom: 0px !important; 
+padding-top: 8.5% !important;
+}
+</style>
+<div style="display: flex; justify-content: center; width: 100%; height:60%; background:transparent; backdrop-filter: blur(20px);">
+ <script defer src="https://use.fontawesome.com/releases/v6.1.1/js/all.js" integrity="sha384-xBXmu0dk1bEoiwd71wOonQLyH+VpgR1XcDH3rtxrLww5ajNTuMvBdL5SOiFZnNdp" crossorigin="anonymous"></script>
+   	<div>
+       <h1>songbank</h1>
+        operations
+        <hr>
+        <form action="" method="post">
+          <div style="display: flex; justify-content: space-evenly; width: 100%; margin-right:10px;">
+              <i class="fa-solid fa-plus">add</i>
+              <i class="fa-solid fa-arrows-spin">modify</i>
+              <i class="fa-solid fa-xmark">delete</i>
+              <input type="text" id="operation" name="operation" placeholder="'CREATE', 'UPDATE', or 'DELETE'" value="CREATE" title="Operation to perform: CREATE adds a song to the songbank, UPDATE will update a particular songID (0-indexed along the songlist to the right) with the appropriate information, and DELETE will delete that song corresponding to a particular ID. See the below fields for more.">
+          </div>
+          <br>
+          <div>
+              <input type="text" id="name" name="name" title="Name of song - no spaces or special characters allowed!"
+              minlength="4" maxlength="80" size="80" placeholder="name" value="Progression0" style="width: 53%;">
+              <input type="number" id="bpm" name="bpm" title="Song BPM: 3 digit integer or float in that range."
+              minlength="2" maxlength="3" size="3" placeholder="bpm" value="174" style="width: 23%;">
+              <input type="number" id="id" name="id" title="ID of song to delete or replace(update). Not important for add/creation operations"
+              minlength="2" maxlength="3" size="3" placeholder="id" value="0" style="width: 19%;"><br>   
+              <textarea type="text" id="chord" name="chord" title="JSON Chord progression for replace or add operations. Should follow the example. Note time is the total play time of that chord, arp is the arpeggiation of that chord, start is the start time in bars from the beginning, and inst is any of the GMS (or other available) instruments."
+              minlength="10" maxlength="999999" style="width:98.2%; height: 250px;  padding: 1px; resize: vertical;" placeholder="[{'chd':'Cm7','time':0.5,'arp':0.125,'start':0,'inst':'Acoustic Grand Piano'},{'chd':'Dsus','time':0.5,'arp':0.125,'start':0.5,'inst':'Acoustic Grand Piano'},{'chd':'Caug7','time':0.5,'arp':0.125,'start':1,'inst':'Acoustic Grand Piano'},{'chd':'Dadd2','time':0.5,'arp':0.125,'start':1.5,'inst':'Acoustic Grand Piano'},{'chd':'Cm7','time':0.5,'arp':0.125,'start':2,'inst':'Acoustic Grand Piano'},{'chd':'Dsus','time':0.5,'arp':0.125,'start':2.5,'inst':'Acoustic Grand Piano'},{'chd':'Caug7','time':0.5,'arp':0.125,'start':3,'inst':'Acoustic Grand Piano'},{'chd':'D,G,A,A# / Dadd2','time':0.5,'arp':0.25,'start':3.5,'inst':'Acoustic Grand Piano'}]" style="width: 98%; ">
+  [{"chd":"Cm7","time":0.5,"arp":0.125,"start":0,"inst":"Acoustic Grand Piano"},{"chd":"Dsus","time":0.5,"arp":0.125,"start":0.5,"inst":"Acoustic Grand Piano"},{"chd":"Caug7","time":0.5,"arp":0.125,"start":1,"inst":"Acoustic Grand Piano"},{"chd":"Dadd2","time":0.5,"arp":0.125,"start":1.5,"inst":"Acoustic Grand Piano"},{"chd":"Cm7","time":0.5,"arp":0.125,"start":2,"inst":"Acoustic Grand Piano"},{"chd":"Dsus","time":0.5,"arp":0.125,"start":2.5,"inst":"Acoustic Grand Piano"},{"chd":"Caug7","time":0.5,"arp":0.125,"start":3,"inst":"Acoustic Grand Piano"},{"chd":"D,G,A,A# / Dadd2","time":0.5,"arp":0.25,"start":3.5,"inst":"Acoustic Grand Piano"}]
+              </textarea>
+	        </div>
+          <input type="submit" value="Submit">
+        </form>
+    </div>
+    <embed type="text/html" src="{{proxy}}/piece" style="width: 25%;">
+</div>
+
+{% endblock %}
+
+{% block content2 %}
+{% include 'analyticsAPI.jinja2' %}
+{% endblock %}

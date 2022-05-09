@@ -11,16 +11,17 @@ from app.core import machine,element
 import json as js
 class appfields:
 
-    def create_piece(obj,chd='-',**kwargs):
+    def create_piece(obj,chd='-',id=None,**kwargs):
         """Create piece/song field in Redis.
         Args:
         obj (musicpy-piece object): complete song information without instrument timbre/frequencies
         chd (dict): JSON-style chord progression
+        id (int, optional): if exists, the key to replace with this piece
         kwargs (optional) : optional arguments that further define the object.
         """
         rd = redis_client(3)
         rdr = redis_client_raw(4)
-        n_keys = len(rd.keys())
+        new_key = len(rd.keys()) if id is None else id
 
         # fill this in with the rest!
         name = str(obj[0]).split('\n')[0][8:]
@@ -36,8 +37,8 @@ class appfields:
         'time'  : obj.eval_time()                       # length of piece/song in seconds
         }
 
-        rd.hset(n_keys,mapping=maps)
-        rdr.set(n_keys, pickle.dumps(obj)) # musicpy object
+        rd.hset(new_key,mapping=maps)
+        rdr.set(new_key, pickle.dumps(obj)) # musicpy object
 
     def create_chdTransform():
         """Make chord transformation matrix (right-applied) to transform from emotional values to a 2D PCA space.
@@ -88,7 +89,7 @@ class appfields:
         if rd.get(name) is None:
             try:
                 pieces, names = [],[]
-                keys = rdr.keys()
+                keys = sorted(rdr.keys())
                 kyz = []
                 for key in keys:
                     try:
