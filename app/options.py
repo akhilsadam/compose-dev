@@ -7,6 +7,7 @@ class options:
     proxy = ""
     redport = 6379
     baseurl = f"http://{host}:{port}{proxy}"
+    deployurl = "https://isp-proxy.tacc.utexas.edu/"
     mdfile = "app/static/api.md"
     readmelink = "https://github.com/akhilsadam/compose"
     template = "templates/"
@@ -31,6 +32,6 @@ class options:
         Return:
             str : baseurl
         """
-        if options.host == "0.0.0.0":
+        if options.proxy == "":
             return f"http://localhost:{options.port}{options.proxy}"
-        return options.baseurl
+        return f"{options.deployurl}{options.proxy}"
