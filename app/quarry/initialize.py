@@ -4,6 +4,7 @@ import logging
 import os
 import pickle
 import json as js
+from re import I
 
 from joblib import Parallel, delayed
 logger = logging.getLogger('root')
@@ -74,6 +75,24 @@ class initialize:
         except Exception as E:
             return f'FAILURE: {E}'
         return 'Success'
+
+    def reset():
+        try:
+            rd=redis_client(3)
+            for key in rd.keys():
+                if rd.hget(key,'type')==1:
+                    nm = rd.hget(key, 'name')
+                    os.system(f"mr app/core/midi/{nm}.midi")
+            rd.flushdb()
+            for i in range(2,15): # start from 2 to not flush queue or jobs.
+                redis_client(i).flushdb()
+            # now flush queue
+            redis_client(0).flushdb()
+            redis_client(1).flushdb()
+            initialize.init()
+        except Exception as E:
+            return f"Wipe Failed with exception {E}"
+        return "RESET"
 
     def init():
         """Run all necessary setup."""

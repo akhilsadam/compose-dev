@@ -2,7 +2,21 @@
 {% extends "rest.jinja2" %}
 
 {% block content %}
-    <img src="data:image/png;base64,{{img}}" style="height:100%; max-width: 100%"></img>
+<script>
+function resizeToMax(id){
+    myImage = new Image() 
+    var img = document.getElementById(id);
+    myImage.src = img.src; 
+    if(myImage.width > myImage.height){
+        img.style.width = "100%";
+    } else {
+        img.style.height = "100%";
+    }
+}
+</script>
+<div style="height:95vh; width: 95vw; text-align: center;">
+    <img id="image" src="data:image/png;base64,{{img}}" style="" onload="resizeToMax(this.id)"></img>
+</div>
 {% endblock %}
 {% block headcontent %}
 {% endblock %}

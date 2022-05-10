@@ -8,57 +8,57 @@ An example of format:
 	"bpm": 174,
 	"chord": [{
 			"chd": "Cm7",
-			"time": 0.5,
-			"arp": 0.125,
+			"duration": 0.5,
+			"interval": 0.125,
 			"start": 0,
 			"inst": "Acoustic Grand Piano"
 		},
 		{
 			"chd": "Dsus",
-			"time": 0.5,
-			"arp": 0.125,
+			"duration": 0.5,
+			"interval": 0.125,
 			"start": 0.5,
 			"inst": "Acoustic Grand Piano"
 		},
 		{
 			"chd": "Caug7",
-			"time": 0.5,
-			"arp": 0.125,
+			"duration": 0.5,
+			"interval": 0.125,
 			"start": 1,
 			"inst": "Acoustic Grand Piano"
 		},
 		{
 			"chd": "Dadd2",
-			"time": 0.5,
-			"arp": 0.125,
+			"duration": 0.5,
+			"interval": 0.125,
 			"start": 1.5,
 			"inst": "Acoustic Grand Piano"
 		},
 		{
 			"chd": "Cm7",
-			"time": 0.5,
-			"arp": 0.125,
+			"duration": 0.5,
+			"interval": 0.125,
 			"start": 2,
 			"inst": "Acoustic Grand Piano"
 		},
 		{
 			"chd": "Dsus",
-			"time": 0.5,
-			"arp": 0.125,
+			"duration": 0.5,
+			"interval": 0.125,
 			"start": 2.5,
 			"inst": "Acoustic Grand Piano"
 		},
 		{
 			"chd": "Caug7",
-			"time": 0.5,
-			"arp": 0.125,
+			"duration": 0.5,
+			"interval": 0.125,
 			"start": 3,
 			"inst": "Acoustic Grand Piano"
 		},
 		{
 			"chd": "D,G,A,A# / Dadd2",
-			"time": 0.5,
-			"arp": 0.25,
+			"duration": 0.5,
+			"interval": 0.25,
 			"start": 3.5,
 			"inst": "Acoustic Grand Piano"
 		}
@@ -78,7 +78,7 @@ class chdprogress:
         Returns:
             mp.piece: musicpy piece from chord progression
         """
-        chord = [mp.C(i['chd']) % (i['time'], i['arp']) for i in chp]
+        chord = [mp.C(i['chd']) % (i['duration'], i['interval']) for i in chp]
         inst = [i['inst'] for i in chp]
         start = [i['start'] for i in chp]
         bpm, chdnotes, _ = mp.piece(chord,inst,bpm,start,['0']*len(chord)).merge()

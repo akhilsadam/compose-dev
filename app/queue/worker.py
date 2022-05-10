@@ -34,7 +34,8 @@ class worker:
         output = function(*args) if len(args) > 0 else function()
         if output is None:
             output = 'None'
-        jobs.update_job_output(jid,output)
-        #---
-        jobs.update_job_time(jid,'end')
-        jobs.update_job_status(jid, 'Completed')
+        if 'RESET' not in output:
+            jobs.update_job_output(jid,output)
+            #---
+            jobs.update_job_time(jid,'end')
+            jobs.update_job_status(jid, 'Completed')

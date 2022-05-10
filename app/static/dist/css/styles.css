@@ -321,6 +321,14 @@ nav a i {
     margin-right: 5px
 }
 
-av a i {
+nav a i {
     margin-right: 5px
+}
+
+.tooltip .tooltiptext {
+    background-color: var(--kokushoku);
+    color: var(--aijiro);
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px 0;
 }

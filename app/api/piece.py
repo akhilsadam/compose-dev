@@ -320,14 +320,13 @@ class piece(MethodResource):
           elif op == 'DELETE':
             rqs.post(f'{base}/piece/{idr}/{op}')
           elif op == 'RESET':
-            piece.rd3.flushall()
-            piece.init()
+            jobs.job(["initialize", "reset"])
           else:
-            raise(op)
+            raise ValueError(f'Bad Operation: {op}')
         except Exception as E: 
           logger.error(f'{route} had exception: {E}')
           print(E)
-          return f"Invalid JSON, possibly. Had exception: {E}"
+          return f"Invalid JSON or bad operation, possibly. Had exception: {E}"
         return redirect("")
 
     ############## play route #######################

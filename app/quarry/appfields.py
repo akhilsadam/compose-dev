@@ -31,6 +31,7 @@ class appfields:
         maps |= kwargs
         maps |= {
         'name'  : name,                                 # piece name
+        'type'  : 1 if chd != '-' else 0,               # chord progression or not ?
         'chd'   : chd,                                  # chord progression as user defined... '-' for a direct mp object
         'bars'  : obj.bars(),                           # number of bars/measures in piece/song
         'bpm'   : obj.bpm,                              # piece/song BPM
@@ -65,7 +66,8 @@ class appfields:
             try:
                 piece = pickle.loads(rdr.get(id))
                 nm = rd0.hget(id,'name')
-                resp = element.plot(piece,nm)
+                tp = int(rd0.hget(id,'type'))
+                resp = element.plot(piece,nm,tp)
                 rd.set(name, resp)
                 return str(resp)[:10]
             except Exception as E:
@@ -88,7 +90,7 @@ class appfields:
             rd.delete(name)
         if rd.get(name) is None:
             try:
-                pieces, names = [],[]
+                pieces, names, types = [],[],[]
                 keys = sorted(rdr.keys())
                 kyz = []
                 for key in keys:
@@ -103,16 +105,18 @@ class appfields:
                     logger.info(f'Get key {key}')
                     pieces.append(pickle.loads(rdr.get(key)))
                     names.append(rd0.hget(key,'name'))
+                    types.append(int(rd0.hget(key,'type')))
                 else:
                     for key in kyz:
                         logger.info(f'Get key {key}')
                         pieces.append(pickle.loads(rdr.get(key)))
                         names.append(rd0.hget(key,'name'))
+                        types.append(int(rd0.hget(key,'type')))
 
                 var = rd2.get('PVE')
                 tfm = pickle.loads(rdr2.get('CHDTF'))
                 relations = js.loads(rd2.get('PC-relations'))
-                resp = element.plotPCA(var,tfm,relations,pieces,names)
+                resp = element.plotPCA(var,tfm,relations,pieces,names,types)
                 rd.set(name, resp)
                 return str(resp)[:10]
             except Exception as E:

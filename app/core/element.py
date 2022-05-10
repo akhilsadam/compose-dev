@@ -32,10 +32,10 @@ except NameError:
 def load(midi):
     return mp.read(midi),pretty_midi.PrettyMIDI(midi)
 
-def analyze(chord,width=1):
+def analyze(chord, type, width=1):
 
-    chordNames = chord.chord_analysis(get_original_order=True)
-    chords = chord.chord_analysis(get_original_order=True,mode='chords')
+    chordNames = chord.chord_analysis(get_original_order=True, is_chord=(type==1))
+    chords = chord.chord_analysis(get_original_order=True,mode='chords',is_chord=(type==1))
 
     bars = np.cumsum([np.sum(c.interval) for c in chords])
     
@@ -55,7 +55,7 @@ def interpdata(top,bars,data,mt = 32):
         idata[:,i] = np.interp(x,bars,data[:,i])
     return x,idata
 
-def info(piece, i):
+def info(piece, type, i):
     track = piece.tracks[i]
     name = f'{tmp_dir}{i}.mid'
     write(track,
@@ -71,7 +71,7 @@ def info(piece, i):
       deinterleave=False,
       remove_duplicates=False)
     midi = pretty_midi.PrettyMIDI(name)
-    bars, chords, chordNames, data = analyze(track)
+    bars, chords, chordNames, data = analyze(track, type)
     return bars, chords, chordNames, data, midi
 
 def save(piece,nm):
@@ -92,17 +92,16 @@ def save(piece,nm):
 
 
 def _plot2(ax,x,data):
-    sp = data.shape
     leg = []                    
     for k in range(ul.n_keys):
         ax.plot(x, data[:, k], c=ul.cs[k])
         leg.append(ul.keys[k])
         
-def plotPCA(var,tfm,relations,pieces : list, names : list, fgz: list = (16,16)) -> str:
+def plotPCA(var,tfm,relations,pieces : list, names : list, types : list, fgz: list = (16,16)) -> str:
     ys = []
     plt.rcParams.update({'font.size': 16})
-    for piece in pieces:
-        _, yun = get_data(piece)
+    for piece,type in zip(pieces,types):
+        _, yun = get_data(piece, type)
         y = np.matmul(yun,tfm)
         # logger.info(f'PCA shape: {y.shape}')
         ys.append(y)
@@ -112,16 +111,17 @@ def plotPCA(var,tfm,relations,pieces : list, names : list, fgz: list = (16,16)) 
     plt.legend(names)
     plt.xlabel(f'Principal Component #1 - {relations[0]}')
     plt.ylabel(f'Principal Component #2 - {relations[1]}')
-    plt.title(f'Pieces as a Distribution on a 2D PC Space \n(explains {int(1000*float(var))/10}% of the variance in chordspace)')
+    plt.title(f'Pieces as a Distribution on a 2D PC Space \n(explains {int(1000*float(var))/10}% of the variance in chordspace)\
+    \nspacing between points represents time due to constant slice rate of 32 pts / bar; traversal direction not shown')
     response = ul.img(fig)
     plt.close()
     return response
     
-def get_data(piece : object, mt : int = 32) -> list:
+def get_data(piece : object, type: int, mt : int = 32) -> list:
     datas = []
     barlist = []
     for i in range(len(piece.tracks)):
-        bars, chords, chordNames, data, _ = info(piece,i)
+        bars, chords, chordNames, data, _ = info(piece,type,i)
         datas.append(data)
         barlist.append(bars)
     #################    
@@ -135,7 +135,7 @@ def get_data(piece : object, mt : int = 32) -> list:
         xc[0] = x
     return xc[0],dataf
 
-def plot(piece : object, name : str, mt : int = 32, fgz: list = (20,8)) -> str:
+def plot(piece : object, name : str, type: int, mt : int = 32, fgz: list = (20,8)) -> str:
     plt.rcParams.update({'font.size': 12})
     leg = ul.keys
     fig,ax = plt.subplots(2,1,figsize=fgz,sharex=True)
@@ -145,7 +145,7 @@ def plot(piece : object, name : str, mt : int = 32, fgz: list = (20,8)) -> str:
     datas = []
     barlist = []
     for i in range(len(piece.tracks)):
-        bars, chords, chordNames, data, _ = info(piece,i)
+        bars, chords, chordNames, data, _ = info(piece,type,i)
         datas.append(data)
         barlist.append(bars)
     #################    
