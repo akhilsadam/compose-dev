@@ -7,7 +7,7 @@ class options:
     proxy = ""
     redport = 6379
     baseurl = f"http://{host}:{port}{proxy}"
-    deployurl = "https://isp-proxy.tacc.utexas.edu/"
+    deployurl = "https://isp-proxy.tacc.utexas.edu"
     mdfile = "app/static/api.md"
     readmelink = "https://github.com/akhilsadam/compose"
     template = "templates/"

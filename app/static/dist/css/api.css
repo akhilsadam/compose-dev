@@ -109,6 +109,6 @@ input {
     overflow-x: hidden;
 }
 
-.scheme-container {
+div.scheme-container {
     background: transparent !important;
 }
