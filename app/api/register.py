@@ -230,7 +230,7 @@ class register(MethodResource):
         route="/api/save"
         try:
             # get api
-            url = f"{options.baseurl}/api/api.json"
+            url = f"{options.getURL()}/api/api.json"
             api = capture(url)
             io = generateAPI(api)
             markdown = formatAPI(io)

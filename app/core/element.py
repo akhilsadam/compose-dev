@@ -74,6 +74,22 @@ def info(piece, i):
     bars, chords, chordNames, data = analyze(track)
     return bars, chords, chordNames, data, midi
 
+def save(piece,nm):
+    track = piece.tracks[0]
+    name = f'/app/app/core/midi/{nm}.mid'
+    write(track,
+      bpm=piece.bpm,
+      channel=0,
+      start_time=None,
+      name=name,
+      instrument=None,
+      i=None,
+      save_as_file=True,
+      msg=None,
+      nomsg=False,
+      deinterleave=False,
+      remove_duplicates=False)
+
 
 def _plot2(ax,x,data):
     sp = data.shape

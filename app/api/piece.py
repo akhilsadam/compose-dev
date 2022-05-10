@@ -319,6 +319,9 @@ class piece(MethodResource):
             rqs.post(f'{base}/piece/{idr}/{op}', json=data)
           elif op == 'DELETE':
             rqs.post(f'{base}/piece/{idr}/{op}')
+          elif op == 'RESET':
+            piece.rd3.flushall()
+            piece.init()
           else:
             raise(op)
         except Exception as E: 

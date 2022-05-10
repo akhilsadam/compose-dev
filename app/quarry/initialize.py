@@ -68,6 +68,9 @@ class initialize:
             os.system(f"touch app/static/audio/{nm}.mp3")
             os.system(f"chmod ugo+rwx app/static/audio/{nm}.mp3")
             element.mp3(mp,f"app/static/audio/{nm}")
+
+            element.save(mp,nm)
+
         except Exception as E:
             return f'FAILURE: {E}'
         return 'Success'
