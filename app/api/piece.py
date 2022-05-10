@@ -124,7 +124,7 @@ class piece(MethodResource):
         """Return the beats per minute (BPM) of a piece as JSON
         ---
         get:
-          description: Get piece's BPM data from Redis.
+          description: Get BPM data for a piece from Redis.
           security:
             - ApiKeyAuth: []
           parameters:
@@ -137,7 +137,7 @@ class piece(MethodResource):
               type: number
           responses:
             200:
-              description: Return a piece's BPM data as JSON
+              description: Return BPM data for a piece as JSON
               content:
                 application/json:
                   schema: JSON
@@ -331,7 +331,7 @@ class piece(MethodResource):
 
     @app.route("/play/<int:songid>/", methods=['GET'])
     def play(songid : int) -> str:
-        """ Play a piece
+        """ Play a piece.
         ---
         get:
           description: Play a piece from Redis.

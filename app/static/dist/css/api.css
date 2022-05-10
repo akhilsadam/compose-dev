@@ -108,3 +108,7 @@ input {
     background-attachment: fixed;
     overflow-x: hidden;
 }
+
+.scheme-container {
+    background: transparent !important;
+}

@@ -131,6 +131,7 @@ app.config.update({
         version=options.apiversion,
         openapi_version="3.0.2",
         plugins=[FlaskPlugin(), MarshmallowPlugin()],
+        servers=[{"url" : options.getURL()}],
     ),
     'APISPEC_SWAGGER_URL': '/api/api.json',
     'APISPEC_SWAGGER_UI_URL': '/api/local'
