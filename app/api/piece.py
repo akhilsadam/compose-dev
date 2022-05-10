@@ -3,6 +3,7 @@ from flask import Blueprint, jsonify, render_template
 from flask import current_app as app
 from flask import request as rq
 import requests as rqs
+import musicpy as mp
 import json as js
 
 from flask_apispec import MethodResource, use_kwargs, marshal_with
@@ -146,6 +147,39 @@ class piece(MethodResource):
             return msg
         # logger.info(f"GET : {route}")
 
+        return jsonify(out)
+
+    #GET number of chords
+    @app.route("/piece/<int:songid>/chords/", methods=['GET'])
+    def piece_chords(songid : int) -> str:
+        """Return the total number of chords of a piece as JSON
+        ---
+        get:
+          description: Get chords data for a piece from Redis.
+          security:
+            - ApiKeyAuth: []
+          parameters:
+          - name: songid
+            in: path
+            description: Index (int) select from for the data list.
+            required: true
+            example: 0
+            schema:
+              type: number
+          responses:
+            200:
+              description: Return chords data for a piece as JSON
+              content:
+                application/json:
+                  schema: JSON
+        """
+        route = f'/piece/{songid}/chords/'
+        try:
+            out = mp.chord_analysis(piece.tracks[0], mode='chord')
+        except Exception as E:
+            msg = "Invalid SongID parameter. Please input an integer in range."
+            logger.error(f'{route}:{msg} had exception {E}')
+            return msg
         return jsonify(out)
 
     # UPDATE / DELETE
