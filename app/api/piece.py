@@ -2,6 +2,7 @@ from flask import jsonify, redirect, render_template
 from flask import current_app as app
 from flask import request as rq
 import requests as rqs
+import musicpy as mp
 import json as js
 import base64
 
@@ -124,7 +125,11 @@ class piece(MethodResource):
         """Return the beats per minute (BPM) of a piece as JSON
         ---
         get:
+<<<<<<< HEAD
           description: Get BPM data for a piece from Redis.
+=======
+          description: Get piece's BPM data from Redis.
+>>>>>>> 278c5737534309c8ad0a6cdfeffc968a6cb6bed7
           security:
             - ApiKeyAuth: []
           parameters:
@@ -133,17 +138,24 @@ class piece(MethodResource):
             description: Index (int) select from for the data list.
             required: true
             example: 0
+<<<<<<< HEAD
             schema:
               type: number
           responses:
             200:
               description: Return BPM data for a piece as JSON
+=======
+          responses:
+            200:
+              description: Return a piece's BPM data as JSON
+>>>>>>> 278c5737534309c8ad0a6cdfeffc968a6cb6bed7
               content:
                 application/json:
                   schema: JSON
         """
         route = f'/piece/{songid}/bpm/'
         try:
+<<<<<<< HEAD
             out = access.get_pieces()[songid]["bpm"]
         except Exception as E:
             msg = "Invalid SongID parameter. Please input an integer in range."
@@ -177,6 +189,49 @@ class piece(MethodResource):
             encoded = base64.b64encode(pickle.dumps(jsm['chord']))
             cs = encoded.decode('ascii')
             logger.info(cs)
+=======
+            out =  access.get_pieces()[songid]["bpm"]
+        except:
+            msg = "Invalid SongID parameter. Please input an integer in range."
+            logger.error(f'{route}:{msg} had exception {E}')
+            return msg
+        # logger.info(f"GET : {route}")
+
+        return jsonify(out)
+
+    #GET number of chords
+    @app.route("/piece/<int:songid>/chords/", methods=['GET'])
+    def piece_chords(songid : int) -> str:
+        """Return the total number of chords of a piece as JSON
+        ---
+        get:
+          description: Get chords data for a piece from Redis.
+          security:
+            - ApiKeyAuth: []
+          parameters:
+          - name: songid
+            in: path
+            description: Index (int) select from for the data list.
+            required: true
+            example: 0
+            schema:
+              type: number
+          responses:
+            200:
+              description: Return chords data for a piece as JSON
+              content:
+                application/json:
+                  schema: JSON
+        """
+        route = f'/piece/{songid}/chords/'
+        try:
+            out = mp.chord_analysis(piece.tracks[0], mode='chord')
+        except Exception as E:
+            msg = "Invalid SongID parameter. Please input an integer in range."
+            logger.error(f'{route}:{msg} had exception {E}')
+            return msg
+        return jsonify(out)
+>>>>>>> 278c5737534309c8ad0a6cdfeffc968a6cb6bed7
 
             jobs.job(["initialize", "init_chd", cs, jsm['bpm'], jsm['name']])
         except Exception as E:
