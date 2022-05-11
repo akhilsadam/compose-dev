@@ -26,6 +26,5 @@ nltk
 pygame
 pydub
 sf2_loader
-dask
 itsdangerous
 markdownify

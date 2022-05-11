@@ -21,10 +21,6 @@ PRODUCTION=production
 nAPI=2
 nWRK=3
 
-# a full rebuild (we need so many variants due to the redis-url finding bash code..this can be optimized later)
-
-
-iteratetest : kill clean build test
 
 iterate: kill clean build run
 
@@ -125,17 +121,9 @@ build:
 	docker build -t ${NAME}/${PACKAGE}:${TAG} -f docker/Dockerfile.api .
 	docker build -t ${NAME}/${WORKER}:${TAG} -f docker/Dockerfile.wrk .
 
-test:
-# only test
-	sh scripts/test.sh ${NAME} ${PACKAGE} ${TAG} ${WORKER} ${TACC} ${APIPORT} ${REDPORT}
-
 run:
 # only run
 	sh scripts/run.sh ${NAME} ${PACKAGE} ${TAG} ${WORKER} ${TACC} ${APIPORT} ${REDPORT}
-
-testrun:
-# test and run
-	sh scripts/testrun.sh ${NAME} ${PACKAGE} ${TAG} ${WORKER} ${TACC} ${APIPORT} ${REDPORT}
 
 push:
 	docker login docker.io

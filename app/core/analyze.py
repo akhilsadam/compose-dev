@@ -1,4 +1,3 @@
-from turtle import st
 import numpy as np
 from scipy import stats
 import musicpy as mp
@@ -16,7 +15,7 @@ plt.switch_backend(backend)
 from app.redisclient import redis_client
 
 #### st coordinate definition:
-def alp(R,r,t) -> np.array:
+def alp(R:float,r:float,t:np.array) -> np.array:
     """Define the lower curve for a Mobius strip with parametrization.
 
     Args:
@@ -29,7 +28,7 @@ def alp(R,r,t) -> np.array:
     """
     A = R + r*np.cos(0.5*t)
     return np.array([A*np.cos(t),A*np.sin(t),r*np.sin(0.5*t)])
-def beta(R,r,t) -> np.array:
+def beta(R:float,r:float,t:np.array) -> np.array:
     """Define the upper curve for a Mobius strip with parametrization.
 
     Args:
@@ -42,7 +41,7 @@ def beta(R,r,t) -> np.array:
     """
     B = R + r*np.cos(np.pi+0.5*t)
     return np.array([B*np.cos(t),B*np.sin(t),r*np.sin(np.pi+0.5*t)])
-def sig(s,t,R,r) -> np.array:
+def sig(s:np.array,t:np.array,R:float,r:float) -> np.array:
     """Define a Mobius strip with parametrization.
 
     Args:
@@ -113,7 +112,15 @@ except NameError:
 
 nms = np.array(['A','A#','B','C','C#','D','D#','E','F','F#','G','G#']) ## helper data
 
-def key_chord(chordname):
+def key_chord(chordname:str) -> object:
+    """Convert all notes and chord (names) to a well-defined string representation of the current key (using 2 characters).
+
+    Args:
+        chordname (str): the chord name from musicpy
+
+    Returns:
+        object: either a list of strings or a string representing the key without overall pitch
+    """
     cname = chordname
     if 'note' in cname:
         cname = chordname.replace('note','').replace(' ','')
@@ -128,12 +135,21 @@ def key_chord(chordname):
         return [key_chord(b),key_chord(a[1:])]
     return 'ERROR'
 
-def current_key(keys,w=8):
+def current_key(keys:list,w:int=8)->np.array:
+    """Perform a moving mode on the keys list to get a value for the `current key`.
+
+    Args:
+        keys (list): immediate key value
+        w (int, optional): size of moving filter. Defaults to 8.
+
+    Returns:
+        np.array: current key
+    """
     n = len(keys)
     out =  [stats.mode(keys[max(i-w,0):i+1,1])[0][0] for i in range(n)]
     return np.array(out).astype(int)
 
-def quality(cs) -> np.ndarray:
+def quality(cs:object) -> np.ndarray:
     """Generate the quality matrix from the chord-progression
     Args: 
         cs (musicpy chord object): input chord-progression
@@ -151,11 +167,11 @@ def quality(cs) -> np.ndarray:
         q[i,2] = e[len(e)-1]
     return q
 
-def toST(intervals):
+def toST(intervals:np.ndarray):
     """Convert interval matrix to a ST-coordinate matrix (both np.ndarray elements)"""
     return np.array([[uvST[rc] for rc in row] for row in intervals]) ### 4 (s,t) pairs for each chord element.
     
-def dST(stcoord):
+def dST(stcoord:np.ndarray):
     """simple differencing of the st coordinates (the input). 
     Returns a flattened difference array (both np.ndarray objects) with one less point (due to differencing)"""
     out = stcoord[1:] - stcoord[:-1]
@@ -164,7 +180,15 @@ def dST(stcoord):
 
 #### route requests
 
-def all(piece):
+def all(piece:mp.piece) -> list:
+    """_summary_
+
+    Args:
+        piece (mp.piece): _description_
+
+    Returns:
+        list: _description_
+    """
     t1 = piece.tracks[0]
     cs = mp.chord_analysis(t1,mode='chords')
     keys = [key_chord(mp.detect(c,mode='chord')) for c in cs]

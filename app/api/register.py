@@ -253,11 +253,19 @@ class register(MethodResource):
           description: Get SwaggerUIBundle item as necessary
           security:
             - ApiKeyAuth: []
+          parameters:
+          - name: item
+            in: path
+            description: missing swagger item.
+            required: true
+            example: swagger-ui.css
+            schema:
+              type: string
           responses:
             200:
               description: Return SwaggerUIBundle url redirect
               content:
-                application/json:
+                application/html:
                   schema: HTML
         """
         route="/static/swagger-ui/"
@@ -275,7 +283,7 @@ class register(MethodResource):
             200:
               description: Return SwaggerUIBundle url redirect
               content:
-                application/json:
+                application/html:
                   schema: HTML
         """
         route="/static/swagger-ui/swagger-ui-bundle.js"

@@ -70,28 +70,26 @@ TBW (to be written)
   - a MP-based object will not create a chord progression, but a chord progression will create an MP object!
  - Chord Progression: A chord progression stored as a list of dictionaries, with chord names and lengths.
   - Examples provided, CRUD amenable.
-###### `db=5`
-- Emotion Object : An emotion object storing the overall emotion vector, as well as the emotion vector time-series (matrix).
- - Examples provided (will be automatically generated), CRUD amenable.
-###### `db=6`
-- SF2: A couple of instrument files will be provided for playing songs. 
- - Examples provided, immutable.
+
 
 ### [@Anneris & @David]:
 #### Generic CRUD operations will be performed on the database as follows:
 ##### Create a song / chord-progression field in the database
 - via an uploaded MIDI file or a chord-progression JSON input
-##### Read out song / chord-progression parameters as JSON, which include:
+##### Read out song / chord-progression parameters as JSON, which include: (any necessary stuff in `db=5`)
 - BPM (a list of dictionaries so as to include time-changes)
 - Total number of chords
 - Chord types (a list of strings)
 - Total number of notes
 - Notes (a list of strings)
 - Note Intervals (a list of floats)
-- An overall emotion vector calculated theoretically
-- An overall emotion vector calculated by comparison to known songs
+
+
 - An instantaneous emotion vector time series (a matrix) calculated theoretically
 - An instantaneous emotion vector time series (a matrix) calculated by comparison to known songs 
+
+
+
 ##### Update all song / chord-progression parameters described above.
 ##### Delete a song / chord-progression field from the database.
 

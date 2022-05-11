@@ -22,7 +22,9 @@ for folder in visible_dir:
 class worker:
 
     @jobs.q.worker
-    def execute_job(self,jid):
+    def execute_job(self,jid:str):
+        """Worker function to execute job with string job id `jid`.
+        """
         jobs.update_job_status(jid, 'Started')
         job = jobs.get_job_by_id(jid)
         jobs.update_job_time(jid,'start')

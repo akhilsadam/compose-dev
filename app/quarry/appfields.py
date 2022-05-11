@@ -1,4 +1,5 @@
 import logging
+
 logger = logging.getLogger('root')
 
 from app.options import options
@@ -11,7 +12,7 @@ from app.core import machine,element
 import json as js
 class appfields:
 
-    def create_piece(obj,chd='-',id=None,**kwargs):
+    def create_piece(obj : object,chd:str='-',id:int=None,**kwargs):
         """Create piece/song field in Redis.
         Args:
         obj (musicpy-piece object): complete song information without instrument timbre/frequencies
@@ -21,17 +22,19 @@ class appfields:
         """
         rd = redis_client(3)
         rdr = redis_client_raw(4)
+        rd5 = redis_client(5)
         new_key = len(rd.keys()) if id is None else id
 
         # fill this in with the rest!
         name = str(obj[0]).split('\n')[0][8:]
+        typec = 1 if chd != '-' else 0
         logger.info(name)
 
         maps = {}
         maps |= kwargs
         maps |= {
         'name'  : name,                                 # piece name
-        'type'  : 1 if chd != '-' else 0,               # chord progression or not ?
+        'type'  : typec,                                # chord progression or not ?
         'chd'   : chd,                                  # chord progression as user defined... '-' for a direct mp object
         'bars'  : obj.bars(),                           # number of bars/measures in piece/song
         'bpm'   : obj.bpm,                              # piece/song BPM
@@ -40,6 +43,34 @@ class appfields:
 
         rd.hset(new_key,mapping=maps)
         rdr.set(new_key, pickle.dumps(obj)) # musicpy object
+
+        track = obj.tracks[0]
+        _,_,cnames,_ =  element.analyze(track, type=typec)
+        notes = [str(i) for i in track.notes]
+        intervals = [str(i) for i in track.interval]
+
+        map2 = {
+            'chd' : js.dumps(cnames),
+            'note': js.dumps(notes),
+            'interval' : js.dumps(intervals)
+        }
+
+        rd5.hset(new_key,mapping=map2)
+
+    def get_chords(i:int):
+        """Get Chords for a piece.
+
+        Args:
+            i (int): key of piece
+        
+        Returns:
+            (list) : list of chords in piece
+        """
+        rd = redis_client(3)
+        rdr = redis_client_raw(4)
+        rd5 = redis_client(5)
+
+        rd5.hset(i,rd.hget(i,'chd'))
 
     def create_chdTransform():
         """Make chord transformation matrix (right-applied) to transform from emotional values to a 2D PCA space.
@@ -53,7 +84,7 @@ class appfields:
         rdr.set('CHDTF', pickle.dumps(tfm))
         rd.set('PC-relations', js.dumps(relations))
 
-    def create_eV_plots(id,update=False) -> str:
+    def create_eV_plots(id:int,update:bool=False) -> str:
         """Make emotional value plots for song with integer id `id`; the `update` boolean will regenerate generated plots if True.
         """
         rdr = redis_client_raw(4)
@@ -76,7 +107,7 @@ class appfields:
                 return f"{msg} Exited with exception: {E}"
         return "No Action Taken..."
 
-    def create_eV_plot(i,update=False) -> str:
+    def create_eV_plot(i:int,update:bool=False) -> str:
         """Make an emotional value plot for all songs; the `update` boolean will regenerate generated plots if True.
            If integer `i` is nonnegative, then only that song will be plotted.
         """

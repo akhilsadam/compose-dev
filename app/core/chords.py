@@ -1,8 +1,16 @@
-# very limited set, and basic approach (note we have not included 'disgust' which would arise from dissonance!)
+# very limited set, and basic approach (note we have not specifically included 'disgust' that would arise from dissonance, only assumming that the language contains such information!)
 from . import utils as ul
 import numpy as np
 # need to iterate top-down to select properly
-def obj(inp):
+def obj(inp:list)->list:
+    """Add vector description of chord in emotion space.
+
+    Args:
+        inp (list): input chord description
+
+    Returns:
+        list: chord description with numeric vector description as element
+    """
     inp.append(ul.nlparse(inp[2]))
     return np.array(inp, dtype=object)
 
@@ -33,7 +41,15 @@ chordbase = np.array([
     obj([['note'],'Single Note','']),
 ])
 
-def value(chd):
+def value(chd:str)->np.array:
+    """Convert chord to emotional value vector
+
+    Args:
+        chd (str): chord name
+
+    Returns:
+        np.array: emotional value vector
+    """
     for c in chordbase:
         items = c[0]
         for item in items:

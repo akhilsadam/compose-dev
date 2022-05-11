@@ -1,7 +1,7 @@
 """Routes for Flask app."""
 import os
 
-from flask import Blueprint, current_app as app, request as rq
+from flask import current_app as app
 from flask import render_template
 import requests as rqs
 
@@ -18,7 +18,7 @@ from functools import lru_cache
 from app.schema import * #schema
 
 @app.route("/", methods=['GET'])
-def home():
+def home() -> str:
     """Application homepage.
     ---
     get:
@@ -29,7 +29,7 @@ def home():
         200:
           description: Return homepage HTML
           content:
-            application/json:
+            application/html:
               schema: HTML
     """
     return render_template(
@@ -43,7 +43,7 @@ def home():
     )
 
 @app.route("/api/doc", methods=['GET'])
-def api():
+def api() -> str:
     """Application API, styled.
     ---
     get:
@@ -54,7 +54,7 @@ def api():
         200:
           description: Return API HTML
           content:
-            application/json:
+            application/html:
               schema: HTML
     """
     # with open("app/static/dist/css/styleapi.css",'r') as f:
@@ -70,7 +70,7 @@ def api():
     )
 
 @app.route("/pdf", methods=['GET'])
-def pdf():
+def pdf() -> str:
     """Application writeup / research article.
     ---
     get:
@@ -81,7 +81,7 @@ def pdf():
         200:
           description: Return writeup HTML
           content:
-            application/json:
+            application/html:
               schema: HTML
     """
     return render_template(
@@ -92,7 +92,7 @@ def pdf():
     )
 
 @lru_cache(maxsize=1)
-def proxyAPI():
+def proxyAPI() -> str:
     """One-time function to get, update, and return links in API html
     Returns:
         str: replaced HTML
@@ -117,7 +117,7 @@ def swagger() -> str:
         200:
           description: Return API HTML
           content:
-            application/json:
+            application/html:
               schema: HTML
     """
     try: 

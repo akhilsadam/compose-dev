@@ -1,6 +1,4 @@
-import pickle
 import musicpy as mp
-import json as js
 """
 An example of format:
 {

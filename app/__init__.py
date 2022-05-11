@@ -2,7 +2,7 @@
 from flask import Flask
 from flask_assets import Environment, Bundle
 
-def init_app():
+def init_app() -> Flask:
     """Construct core Flask application with possible Dash app."""
     fapp = Flask(__name__, instance_relative_config=False)
     fapp.config.from_object('config.Config')

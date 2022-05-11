@@ -19,22 +19,22 @@ class jobs:
     max_job_id = 1000000
     last_job_id = -1
 
-    def generate_jid():
+    def generate_jid() -> str:
         """
         Generate a pseudo-random identifier for a job.
         """
         return str(uuid.uuid4())
 
     @staticmethod
-    def generate_job_key(jid):
+    def generate_job_key(jid) -> str:
         """
-        Generate the redis key from the job id to be used when storing, retrieving or updating
+        Generate the redis key from the job id `jid` to be used when storing, retrieving or updating
         a job in the database.
         """
         return f'job.{jid}'
 
     @staticmethod
-    def job(msg,idmod=None):
+    def job(msg:list,idmod:str=None) -> str:
         """
         API route for creating a new job to do some analysis. This route accepts a JSON payload
         describing the job to be created.
@@ -42,7 +42,7 @@ class jobs:
         Args:
             msg (list) : the input message that calls a specific backend function.
             msg[0] is the class/module, msg[1] the function name, while the rest are arguments.
-            idmod (str): any extra specifier for sorting.
+            idmod (str,optional): any extra specifier for sorting.
         """
         try:
 
@@ -87,19 +87,19 @@ class jobs:
         return js.dumps(cjob)
 
     @staticmethod
-    def save_job(job_key, job_dict):
-        """Save a job object in the Redis database."""
+    def save_job(job_key:str, job_dict:dict):
+        """Save a job object in the Redis database with job key `job_key` and job information as a dictionary (`job_dict`)."""
         logger.info(job_dict)
         jobs.rd.hset(job_key,mapping=job_dict)
 
     @staticmethod
-    def queue_job(jid):
-        """Add a job to the redis queue."""
+    def queue_job(jid:str):
+        """Add a job to the redis queue with job id `jid` (str)."""
         jobs.q.put(jid)
 
     @staticmethod
-    def update_job_status(jid, status): 
-        """Update the status of job with job id `jid` to status `status`."""
+    def update_job_status(jid:str, status:str): 
+        """Update the status of job with string job id `jid` to string status `status`."""
         if job := jobs.get_job_by_id(jid):
             job['status'] = status
             jobs.save_job(jobs.generate_job_key(jid), job)
@@ -107,8 +107,8 @@ class jobs:
             raise KeyError("Cannot update status; job does not exist.")
 
     @staticmethod
-    def update_job_time(jid, key): 
-        """Update time of job with job id `jid` with key `key`."""
+    def update_job_time(jid:str, key:str): 
+        """Update time of job with job id `jid` (str) with time value label `key` (str)."""
         if job := jobs.get_job_by_id(jid):
             job[key] = str(datetime.now())
             jobs.save_job(jobs.generate_job_key(jid), job)
@@ -116,8 +116,8 @@ class jobs:
             raise KeyError("Cannot update time; job does not exist.")
     
     @staticmethod
-    def update_job_output(jid, output): 
-        """Update time of job with job id `jid` with output `output`."""
+    def update_job_output(jid:str, output:str): 
+        """Update output of job with job id `jid` (str) with output string `output`."""
         if job := jobs.get_job_by_id(jid):
             job['output'] = output
             jobs.save_job(jobs.generate_job_key(jid), job)
@@ -125,5 +125,13 @@ class jobs:
             raise KeyError("Cannot update output; job does not exist.")
 
     @staticmethod
-    def get_job_by_id(jid):
+    def get_job_by_id(jid:str) -> dict:
+        """Get job information by id.
+
+        Args:
+            jid (str): job id
+
+        Returns:
+            dict: job information
+        """
         return jobs.rd.hgetall(jobs.generate_job_key(jid))

@@ -1,4 +1,6 @@
 import logging
+
+import matplotlib
 logger = logging.getLogger('root')
 
 from musicpy import *
@@ -29,11 +31,28 @@ except NameError:
         logger.info(f"Loading : {names[i]}")
         smp.load(i,f'app/static/sfz/{names[i]}')
 
-def load(midi):
+def load(midi:str) -> list:
+    """Loads a midi file into the framework
+
+    Args:
+        midi (str): path to midifile
+
+    Returns:
+        list: musicpy object, and prettyMidi object with the midi data
+    """
     return mp.read(midi),pretty_midi.PrettyMIDI(midi)
 
-def analyze(chord, type, width=1):
+def analyze(chord:mp.track, type:int, width:int=1) -> list:
+    """Run Chord Analysis and get emotional vector data
 
+    Args:
+        chord (mp.track): musicpy track to run analysis on
+        type (int): is this a progression or a full song?
+        width (int, optional): kernel width for postprocessing analysis. Defaults to 1.
+
+    Returns:
+        list: chord start times, chords as mp objects, chord names, and the emotional value matrix (not regular in time)
+    """
     chordNames = chord.chord_analysis(get_original_order=True, is_chord=(type==1))
     chords = chord.chord_analysis(get_original_order=True,mode='chords',is_chord=(type==1))
 
@@ -47,7 +66,18 @@ def analyze(chord, type, width=1):
     
     return bars, chords, chordNames, data
 
-def interpdata(top,bars,data,mt = 32):
+def interpdata(top:float,bars:list,data:np.array,mt:int = 32) -> list:
+    """Interpolate emotional value data to make a matrix
+
+    Args:
+        top (float):  total length of piece in bars
+        bars (list):  chord start times in bars
+        data (np.array): emotional value data
+        mt (int, optional): Discretization size in 1/bars. Defaults to 32.
+
+    Returns:
+        list: returns x-values and matrix
+    """
     x = np.linspace(0,top,mt*top)
     sp = data.shape
     idata = np.zeros((top*mt,sp[1]))
@@ -55,7 +85,17 @@ def interpdata(top,bars,data,mt = 32):
         idata[:,i] = np.interp(x,bars,data[:,i])
     return x,idata
 
-def info(piece, type, i):
+def info(piece:mp.piece, type:int, i:int=0) -> list:
+    """Get all information from a single track of a piece.
+
+    Args:
+        piece (object): piece to get data from
+        type (int): chord progression or not? (bool, really)
+        i (int, optional): the particular track of interest.
+
+    Returns:
+        list: all informations (self-explanatory)
+    """
     track = piece.tracks[i]
     name = f'{tmp_dir}{i}.mid'
     write(track,
@@ -74,7 +114,13 @@ def info(piece, type, i):
     bars, chords, chordNames, data = analyze(track, type)
     return bars, chords, chordNames, data, midi
 
-def save(piece,nm):
+def save(piece:mp.piece,nm:str):
+    """Save a piece to midi.
+
+    Args:
+        piece (mp.piece): piece to save.
+        nm (str): name of piece.
+    """
     track = piece.tracks[0]
     name = f'/app/app/core/midi/{nm}.mid'
     write(track,
@@ -91,13 +137,34 @@ def save(piece,nm):
       remove_duplicates=False)
 
 
-def _plot2(ax,x,data):
+def _plot2(ax:object,x:np.array,data:np.ndarray):
+    """Helper plot function for ev plots
+
+    Args:
+        ax (object): axes of figure
+        x (np.array): x-values
+        data (np.array): emotional value matrix
+    """
     leg = []                    
     for k in range(ul.n_keys):
         ax.plot(x, data[:, k], c=ul.cs[k])
         leg.append(ul.keys[k])
         
-def plotPCA(var,tfm,relations,pieces : list, names : list, types : list, fgz: list = (16,16)) -> str:
+def plotPCA(var: float,tfm: np.ndarray,relations:list,pieces : list, names : list, types : list, fgz: list = (16,16)) -> str:
+    """Plot emotional value on a latent space of emotion using a PCA transformation defined by the chordbase dictionary set (i.e. what can possibly be explained by the chords).
+
+    Args:
+        var (float): Percentage of Variance in emotion-space explained by the chords (PVE)
+        tfm (np.ndarray): V matrix from SVD - the PCA transformation matrix
+        relations (list): list of most related axes to latent space axes
+        pieces (list): pieces to plot
+        names (list): names of pieces
+        types (list): chord progressions or not? (bools, really)
+        fgz (list, optional): figure size. Defaults to (16,16).
+
+    Returns:
+        str: Base64 encoded image
+    """
     ys = []
     plt.rcParams.update({'font.size': 16})
     for piece,type in zip(pieces,types):
@@ -118,10 +185,20 @@ def plotPCA(var,tfm,relations,pieces : list, names : list, types : list, fgz: li
     return response
     
 def get_data(piece : object, type: int, mt : int = 32) -> list:
+    """Get emotional value data from piece
+
+    Args:
+        piece (object): piece to get data from
+        type (int): chord progression or not? (bool, really)
+        mt (int, optional): Discretization size in 1/bars. Defaults to 32.
+
+    Returns:
+        list: x-values and y-values for emotional value matrix
+    """
     datas = []
     barlist = []
     for i in range(len(piece.tracks)):
-        bars, chords, chordNames, data, _ = info(piece,type,i)
+        bars, _,_, data, _ = info(piece,type,i)
         datas.append(data)
         barlist.append(bars)
     #################    
@@ -136,6 +213,18 @@ def get_data(piece : object, type: int, mt : int = 32) -> list:
     return xc[0],dataf
 
 def plot(piece : object, name : str, type: int, mt : int = 32, fgz: list = (20,8)) -> str:
+    """Plot emotional value for a single song
+
+    Args:
+        piece (object): piece to plot
+        name (str): name of piece
+        type (int): chord progression or not? (bool, really)
+        mt (int, optional): Discretization size in 1/bars. Defaults to 32.
+        fgz (list, optional): figure size. Defaults to (20,8).
+
+    Returns:
+        str: Base64 encoded image string
+    """
     plt.rcParams.update({'font.size': 12})
     leg = ul.keys
     fig,ax = plt.subplots(2,1,figsize=fgz,sharex=True)
@@ -179,7 +268,13 @@ def plot(piece : object, name : str, type: int, mt : int = 32, fgz: list = (20,8
     #################
     return response    
             
-def mp3(piece,name): 
+def mp3(piece:mp.piece,name:str): 
+    """Generate an MP3 file on disk
+
+    Args:
+        piece (mp.piece): piece object to save
+        name (str): filename
+    """
     smp.export(obj=piece,mode='mp3',action='export',filename=f'{name}.mp3')
             
 ############################# testing methods / sandbox below / not part of API ###################

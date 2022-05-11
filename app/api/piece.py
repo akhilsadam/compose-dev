@@ -118,54 +118,16 @@ class piece(MethodResource):
         print(out)
         return jsonify(out)
 
-    #GET bpm
-    @app.route("/piece/<int:songid>/bpm/", methods=['GET'])
-    def piece_bpm(songid : int) -> str:
-        """Return the beats per minute (BPM) of a piece as JSON
-        ---
-        get:
-          description: Get BPM data for a piece from Redis.
-          security:
-            - ApiKeyAuth: []
-          parameters:
-          - name: songid
-            in: path
-            description: Index (int) select from for the data list.
-            required: true
-            example: 0
-            schema:
-              type: number
-          responses:
-            200:
-              description: Return BPM data for a piece as JSON
-              content:
-                application/json:
-                  schema: JSON
-        """
-        route = f'/piece/{songid}/bpm/'
-        try:
-            out = access.get_pieces()[songid]["bpm"]
-        except Exception as E:
-            msg = "Invalid SongID parameter. Please input an integer in range."
-            logger.error(f'{route}:{msg} had exception {E}')
-            return msg
-        return jsonify(out)
-
+    ############################## CUD ##############################################################################
     # CREATE
     # create a song from a chord progression
     @app.route("/piece/CREATE", methods=['POST'])
-    def piece_create():
+    def piece_create() -> str:
         """
-        Replaces a song-data object in the songbank with user inputted namesake.
+        Replaces a song-data object in the songbank with user inputted namesake (JSON).
         --- 
         post:
-          description: Update a song in the songbank.
-          requestBody:
-            description: Chord progression JSON input
-            required: true
-            content:
-              application/json:
-                example: {"name":"Progression0","bpm":174,"chord":[{"chd":"Cm7","time":0.5,"arp":0.125,"start":0,"inst":"Acoustic Grand Piano"},{"chd":"Dsus","time":0.5,"arp":0.125,"start":0.5,"inst":"Acoustic Grand Piano"},{"chd":"Caug7","time":0.5,"arp":0.125,"start":1,"inst":"Acoustic Grand Piano"},{"chd":"Dadd2","time":0.5,"arp":0.125,"start":1.5,"inst":"Acoustic Grand Piano"},{"chd":"Cm7","time":0.5,"arp":0.125,"start":2,"inst":"Acoustic Grand Piano"},{"chd":"Dsus","time":0.5,"arp":0.125,"start":2.5,"inst":"Acoustic Grand Piano"},{"chd":"Caug7","time":0.5,"arp":0.125,"start":3,"inst":"Acoustic Grand Piano"},{"chd":"D,G,A,A# / Dadd2","time":0.5,"arp":0.25,"start":3.5,"inst":"Acoustic Grand Piano"}]}
+          description: Update a song in the songbank. Complete example not available here.
           responses:
             201:
               description: Return a confirmation message stating that the update was a success.         
@@ -188,12 +150,12 @@ class piece(MethodResource):
     # UPDATE
     # update a song by replacing it with a user-uploaded version
     @app.route("/piece/<int:songid>/UPDATE", methods=['POST'])
-    def piece_update(songid : int):
+    def piece_update(songid : int) -> str:
         """
-        Replaces a song-data object in the songbank with user input.
+        Replaces a song-data object in the songbank with user inputted JSON.
         --- 
         post:
-          description: Update a song in the songbank.
+          description: Update a song in the songbank. Complete example not available here.
           parameters:
           - name: songid
             in: path
@@ -202,12 +164,6 @@ class piece(MethodResource):
             example: 1
             schema:
               type: number
-          requestBody:
-            description: Chord progression JSON input
-            required: true
-            content:
-              application/json:
-                example: {"name":"Progression0","bpm":174,"chord":[{"chd":"Cm7","time":0.5,"arp":0.125,"start":0,"inst":"Acoustic Grand Piano"},{"chd":"Dsus","time":0.5,"arp":0.125,"start":0.5,"inst":"Acoustic Grand Piano"},{"chd":"Caug7","time":0.5,"arp":0.125,"start":1,"inst":"Acoustic Grand Piano"},{"chd":"Dadd2","time":0.5,"arp":0.125,"start":1.5,"inst":"Acoustic Grand Piano"},{"chd":"Cm7","time":0.5,"arp":0.125,"start":2,"inst":"Acoustic Grand Piano"},{"chd":"Dsus","time":0.5,"arp":0.125,"start":2.5,"inst":"Acoustic Grand Piano"},{"chd":"Caug7","time":0.5,"arp":0.125,"start":3,"inst":"Acoustic Grand Piano"},{"chd":"D,G,A,A# / Dadd2","time":0.5,"arp":0.25,"start":3.5,"inst":"Acoustic Grand Piano"}]}
           responses:
             201:
               description: Return a confirmation message stating that the update was a success.         
@@ -233,7 +189,7 @@ class piece(MethodResource):
     # Would be better to have a list-style structure in Redis, but unfortunately that is not possible 
     # (note not referring to a list object, but rather a list access over a dict key-based access for Redis)
     @app.route("/piece/<int:songid>/DELETE", methods=['POST'])
-    def piece_delete(songid : int):
+    def piece_delete(songid : int) -> str:
         """
         Takes a song id and deletes that song from the songbank.
         --- 
@@ -262,6 +218,7 @@ class piece(MethodResource):
                 # all later keys - push up - cannot be parallelized at the moment.
                 access.hrename(3,key+1,key)
                 access.rename_raw(4,key+1,key)
+                access.hrename(5,key+1,key)
         except Exception as E:
             msg = 'Song not in database.'
             logger.error(f'{route}:{msg}. Exception: {E}.')
@@ -283,7 +240,7 @@ class piece(MethodResource):
             200:
               description: Return songbank GUI as HTML.
               content:
-                application/json:
+                application/html:
                   schema: HTML      
         post:
           description: Call necessary routes with given input.

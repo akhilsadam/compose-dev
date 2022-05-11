@@ -3,7 +3,7 @@ from app.options import options
 import logging
 logger = logging.getLogger('root')
 
-def css_replace(proxy):
+def css_replace(proxy:str):
     """Edit css files to fix urls for proxy.
 
     Args:

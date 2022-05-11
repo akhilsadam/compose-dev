@@ -45,7 +45,7 @@ class analyze(MethodResource):
             200:
               description: Return a single piece (eV) plot as HTML
               content:
-                application/json:
+                application/html:
                   schema: HTML   
         post:
           description: Update eV plot for selected piece.
@@ -96,7 +96,7 @@ class analyze(MethodResource):
             200:
               description: Return a 2D chordspace plot of all pieces (the eV) as HTML
               content:
-                application/json:
+                application/html:
                   schema: HTML            
         """
         route = '/analyze/PCA/emotion/'
@@ -140,7 +140,7 @@ class analyze(MethodResource):
             200:
               description: Return a 2D chordspace plot of a single piece eV as HTML
               content:
-                application/json:
+                application/html:
                   schema: HTML      
         post:
           description: Update eV-PCA plot for selected piece.

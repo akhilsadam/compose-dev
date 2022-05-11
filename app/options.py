@@ -27,9 +27,9 @@ class options:
         options.proxy=f"/{pxy}"
         options.baseurl = f"http://{options.host}:{options.port}{options.proxy}"
     
-    def getURL():
+    def getURL() -> str:
         """Get baseurl for documentation generator
-        Return:
+        Returns:
             str : baseurl
         """
         if options.proxy == "":
