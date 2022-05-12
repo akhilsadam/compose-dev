@@ -8,7 +8,7 @@ Clone the repository and then use the makefile to start the containers (make sur
 `cd compose-dev`    
 `make iterate`    
 
-Now either use a browser or a curl utility to interact with the application at `https://localhost:5026/`. Further instructions are provided in the writeup, so please refer there as necessary.  
+Now either use a browser or a curl utility to interact with the application at `https://localhost:5026/`. Further instructions are provided in the API documentation below, and in the writeup, so please refer there as necessary.  
 
 To perform integration tests, once the `make iterate` command has been run, in another terminal, type the following:  
 `pytest`  
