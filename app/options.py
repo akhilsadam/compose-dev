@@ -9,7 +9,7 @@ class options:
     baseurl = f"http://{host}:{port}{proxy}"
     deployurl = "https://isp-proxy.tacc.utexas.edu"
     mdfile = "app/static/api.md"
-    readmelink = "https://github.com/akhilsadam/compose"
+    readmelink = "https://github.com/akhilsadam/compose-dev"
     template = "templates/"
 
     def sethost(rhost):
