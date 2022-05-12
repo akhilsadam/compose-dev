@@ -12,10 +12,9 @@
 
 #  Implementation
 
-This project uses Python3 (in particular Flask), and Docker for containerization. Specific Python3 package requirements can be found <a href="https://github.com/akhilsadam/positional-iss/blob/master/requirements.txt">here</a>. R and the npm package `@appnest/readme` by Andreas Mehlsen are used for documentation, but are not part of the API and will not be documented.
+This project uses Python3 (in particular Flask), Docker for containerization, and Kubernetes for deployment. Specific Python3 package requirements can be found <a href="https://github.com/akhilsadam/compose-dev/blob/main/requirements.txt">here</a>. R and the npm package `@appnest/readme` by Andreas Mehlsen are used for documentation, but are not part of the API and will not be documented.
 
-The source is available <a href="https://github.com/akhilsadam/positional-iss/">here</a>.
-
+The source is available <a href="https://github.com/akhilsadam/compose-dev">here</a>.
 
 A list of important files can be found below.
 
@@ -25,23 +24,36 @@ A list of important files can be found below.
 ##  Files
 
  - `app/`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The application folder.
- - `doc/`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A documentation folder.
- - `Dockerfile`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A dockerfile for containerization.
+ - `test/`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Contains testfiles.
+ 
  - `Makefile`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A makefile for ease of compilation.
- - `requirements.txt`:&nbsp;&nbsp;&nbsp;&nbsp;The list of Python3 requirements.
- - `wsgi.py`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The main Python file.
+ - `docker/`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A folder containing dockerfiles for containerization.
+ - `deployment/`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A folder containing yaml files for Kubernetes test and production deployments.
+ - `flask-data/` and `redis-data/`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Volume mount folders for Docker-only testing.
+ - `scripts`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Contains run scripts for Docker-only testing.
+ - `requirements.txt` and `require-worker.txt`:&nbsp;&nbsp;&nbsp;&nbsp;The list of Python3 requirements for the API and worker containers.
 
+ - `doc/`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A documentation folder.
+ - `blueprint.*` and `package*`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Files for automatic README generation.
+ 
+ - `core.py`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The main Python file for API containers.
+ - `worker.py`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The main Python file for worker containers.
 ### The App/ Directory
 
 - `api/`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Contains API route definitions in Python.
+- `shaft/`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Contains additional functions for API container usage.
+- `queue/`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Contains job MPI functions for both API and worker containers.
 - `static/`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Contains static files for browser use.
+- `quarry/`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Contains worker task definitions.
+- `core/`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Contains analysis and processing functions for worker use.
 - `templates/`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Contains Jinja2 templates for browser use.
-- `test`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Contains testfiles in Python.
+
 - `assets.py`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Collects static files for browser use.
-- `routes.py`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Collects the API route definitions.
 - `log.py`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Defines Python logger.
 - `options.py`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Defines global options, like the application url.
-
+- `redisclient.py`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Contains helper Redis methods.
+- `routes.py`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Collects the API route definitions.
+- `schema.py`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Defines basic route schemata.
 
 
 
@@ -51,12 +63,23 @@ A list of important files can be found below.
 
 ##  Input Data
 
-- The application queries data from the National Aeronautics and Space Administration (NASA) public website, in particular ISS positional information via the <a href="https://nasa-public-data.s3.amazonaws.com/iss-coords/2022-02-13/ISS_OEM/ISS.OEM_J2K_EPH.xml">Public Distribution file</a> and regional sighting data for the Midwest via the <a href="https://nasa-public-data.s3.amazonaws.com/iss-coords/2022-02-13/ISS_sightings/XMLsightingData_citiesUSA05.xml">XMLsightingData_citiesUSA05</a> file.
+- The application uses midi data from several composers, listed below. In addition, self-generated datasets are also used upon user request.  
 
+```
+Kawaki wo Ameku (Crying for Rain) - Minami (arr. Animenz)
+Unravel - TK from Ling Tosite Sugire (arr. Animenz)
+Iris - Cynax
+Bokura mada Underground (We're Still Underground) - E ve
+Higurashi no Naku Koro ni - Shimamiya Eiko (Main Theme)
+Vogel im Kafig (Bird in a Cage) - Sawano Hiroyuki
+One Last Kiss - Utada Hikaru
+```
+```
+Moonlight Sonata (1st Movement) - Ludwig van Beethoven
+Opus 10, Number 4 (Torrent) - Fryderyk Franciszek Chopin
+```
 
-
-Example input data is available at the above links, and can also be found in the writeup, at `app/api/static/doc/article.pdf`.
-
+- DO NOT download / distribute these midi reductions in any form or fashion (they are only available here under fair use).
 
 
 
@@ -64,90 +87,68 @@ Example input data is available at the above links, and can also be found in the
 
 #  Installation & Usage
 
-A user can build this project from source, or use the provided Docker container on DockerHub.  
+A user can build this project from source, use the provided Docker containers on DockerHub, or deploy to a Kubernetes cluster.  
 A Docker installation is required for source builds, as we build and run a Docker image.
 
 
 
 
-The following commands are all terminal commands, and are expected to run on a Ubuntu 20.04 machine with Python3, and are written in that fashion. Mileage may vary for other systems. We will describe the Docker installation first.   
+The following commands are all terminal commands, and are expected to run on a Ubuntu 20.04 machine with Python3, and are written in that fashion. Mileage may vary for other systems. 
 
-### From Docker:
+### From Source:
 
-#### Install
+Clone the repository and then use the makefile to start the containers (make sure Docker has been installed prior).  
+`git clone https://github.com/akhilsadam/compose-dev`  
+`cd compose-dev`  
+`make iterate`  
 
-To install the Docker container, first install Docker.  
+Now either use a browser or a curl utility to interact with the application at `https://localhost:5026/`. Further instructions are provided in the writeup, so please refer there as necessary.
 
-  - `apt-get install docker` (if using an Ubuntu machine, else get Docker from <a href="https://www.docker.com/">docker.com</a>.)  
-  
-Next install the containers.  
+To perform integration tests, once the `make iterate` command has been run, in another terminal, type the following:  
+`pytest`  
+If no errors can be seen in terminal output, the application has passed the integration tests.  
 
-  - `docker pull akhilsadam/positional-iss:0.0.2`  
+### Kubernetes Deployment:  
 
-#### Run  
+Prerequisites: Create your public urls and ports, and place them in the `home` directory in a file called `portinfo`. The style should be as follows:
+```
+docker port: 5026
+kube port 1: 30026
+kube port 2: 30126
+public url 1: "https://isp-proxy.tacc.utexas.edu/as_tacc-1/"
+public url 2: "https://isp-proxy.tacc.utexas.edu/as_tacc-2/"
+```
+Here we have given the ports as expected for the primary deployment cluster.
 
-To test the code, please run the following in a terminal.  
+Navigate to your preconfigured Kubernetes cluster via terminal, and then run the following commands in the terminal.
+`git clone https://github.com/akhilsadam/compose-dev`  
+`cd compose-dev` 
+`make cubeiterateT`
 
-  - `docker run -it --rm akhilsadam/positional-iss:0.0.2 testall.py`  
+If you are deploying to production, do `make cubeiterate` instead of `make cubeiterateT`.
 
+The Kubernetes services, PVCs, deployments, and pods should now be up and running.
 
-To run the code, please run the following in a terminal. The terminal should return a link, which can be viewed via a browser or with the `curl` commands documented in the API reference section.  
+Note we do not perform integration tests on the Kubernetes cluster, however; if that is necessary, please tweak the `/test/test_api.py` file with the following replacement.
+`'http://localhost:5026/api/save'` -> `<your public url with proxy>/api/save`
+Now running `pytest` in the terminal should test the application.
 
-  - `docker run --name "positional-iss" -p 5026:5026 akhilsadam/positional-iss:0.0.2 wsgi.py`  
+### From Docker
 
+As before, in a terminal, do the following:  
+`git clone https://github.com/akhilsadam/compose-dev`  
+`cd compose-dev`  
+`make run`   
 
-Now we will move to the source installation.  
-
-### From Source:  
-
-Since this is a Docker build, the requirements need not be installed on the server, as it will automatically be done on the Docker image.  
-All commands, unless otherwise noted, are to be run in a terminal (in the home directory of the cloned repository).  
-
-#### Build  
-
-Again, first install Docker.  
-
-  - `apt-get install docker` (if using an Ubuntu machine, else get Docker from <a href="https://www.docker.com/">docker.com</a>.)  
-  
-Next, clone the repository and change directory into the repository.  
-
-  - `git clone git@github.com:akhilsadam/positional-iss.git`  
-
-  - `cd positional-iss`  
-
-
-Now build the image.  
-
-  - `make build`  
-
-#### Run  
-
-To test the code, please run one of the following.  
-
-  - `make test`  
-
-  - `pytest`  
-
-
-To run the code, please run the following. The terminal should return a link, which can be viewed via a browser or with the `curl` commands documented in the API reference section.  
-
-  - `make run`  
-
-To run a rebuild of the code, run this command instead. This command will automatically kill, rebuild, and test the code before running.  
-
-  - `make iterate`  
+To perform integration tests, once the `make run` command has been successfully run, in another terminal, type the following:  
+`pytest`  
 
 
 
 
-[![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/cloudy.png)](#usage--)
+[![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/cloudy.png)](#api--)
 
-##  Usage  
-
-
-
-As mentioned above, a browser or the `curl` utility is necessary to view output. All endpoints as mentioned in the REST API section are valid urls, and navigating to those links will return expected output as included in this document.
-
+##  API  
 
 <details>
 <summary> Complete API Reference </summary>
@@ -506,13 +507,10 @@ As mentioned above, a browser or the `curl` utility is necessary to view output.
 		* [The App/ Directory](#the-app-directory)
 	* [ Input Data](#-input-data)
 * [ Installation & Usage](#-installation--usage)
-		* [From Docker:](#from-docker)
-			* [Install](#install)
-			* [Run  ](#run--)
-		* [From Source:  ](#from-source--)
-			* [Build  ](#build--)
-			* [Run  ](#run---1)
-	* [ Usage  ](#-usage--)
+		* [From Source:](#from-source)
+		* [Kubernetes Deployment:  ](#kubernetes-deployment--)
+		* [From Docker](#from-docker)
+	* [ API  ](#-api--)
 	* [ REST API:](#-rest-api)
 		* [ENDPOINT: `/`](#endpoint-)
 		* [ENDPOINT: `/api/doc`](#endpoint-apidoc)
