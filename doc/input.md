@@ -1,4 +1,19 @@
 ## Input Data
 
-- The application queries data from the National Aeronautics and Space Administration (NASA) public website, in particular ISS positional information via the <a href="https://nasa-public-data.s3.amazonaws.com/iss-coords/2022-02-13/ISS_OEM/ISS.OEM_J2K_EPH.xml">Public Distribution file</a> and regional sighting data for the Midwest via the <a href="https://nasa-public-data.s3.amazonaws.com/iss-coords/2022-02-13/ISS_sightings/XMLsightingData_citiesUSA05.xml">XMLsightingData_citiesUSA05</a> file.
+- The application uses midi data from several composers, listed below. In addition, self-generated datasets are also used upon user request.  
 
+```
+Kawaki wo Ameku (Crying for Rain) - Minami (arr. Animenz)
+Unravel - TK from Ling Tosite Sugire (arr. Animenz)
+Iris - Cynax
+Bokura mada Underground (We're Still Underground) - E ve
+Higurashi no Naku Koro ni - Shimamiya Eiko (Main Theme)
+Vogel im Kafig (Bird in a Cage) - Sawano Hiroyuki
+One Last Kiss - Utada Hikaru
+```
+```
+Moonlight Sonata (1st Movement) - Ludwig van Beethoven
+Opus 10, Number 4 (Torrent) - Fryderyk Franciszek Chopin
+```
+
+- DO NOT download / distribute these midi reductions in any form or fashion (they are only available here under fair use).
