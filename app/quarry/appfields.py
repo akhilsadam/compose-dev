@@ -1,5 +1,7 @@
 import logging
 
+from app.quarry.chdprogress import chdprogress
+
 logger = logging.getLogger('root')
 
 from app.options import options
@@ -12,13 +14,15 @@ from app.core import machine,element
 import json as js
 class appfields:
 
-    def create_piece(obj : object,chd:str='-',id:int=None,**kwargs):
+    def create_piece(obj : object,chd:str='-',id:int=None,**kwargs) -> int:
         """Create piece/song field in Redis.
         Args:
-        obj (musicpy-piece object): complete song information without instrument timbre/frequencies
-        chd (dict): JSON-style chord progression
-        id (int, optional): if exists, the key to replace with this piece
-        kwargs (optional) : optional arguments that further define the object.
+            obj (musicpy-piece object): complete song information without instrument timbre/frequencies
+            chd (dict): JSON-style chord progression
+            id (int, optional): if exists, the key to replace with this piece
+            kwargs (optional) : optional arguments that further define the object.
+        Returns:
+            new_key : (int) the index of the piece
         """
         rd = redis_client(3)
         rdr = redis_client_raw(4)
@@ -156,3 +160,39 @@ class appfields:
                 return f"{msg} Exited with exception: {E}"
         return "No Action Taken..."
 
+    def create_dst_plots(id:int,update:bool=False) -> str:
+        """Make dst coordinate plots for song with integer id `id`; the `update` boolean will regenerate generated plots if True.
+        """
+        rdr = redis_client_raw(4)
+        rd0 = redis_client(3)
+        rd = redis_client_raw(7)
+        name = f'{id}_1'
+        if update:
+            rd.delete(name)
+        if rd.get(name) is None:
+            try:
+                piece = pickle.loads(rdr.get(id))
+                nm = rd0.hget(id,'name')
+                tp = int(rd0.hget(id,'type'))
+                resp = element.plotST(piece,nm,tp)
+                rd.set(name, resp)
+                return str(resp)[:10]
+            except Exception as E:
+                msg = "Song not available; please check back later."
+                logger.info(f"{msg} with exception:{E}")
+                return f"{msg} Exited with exception: {E}"
+        return "No Action Taken..."
+        
+    def makenull(id:int) -> str:
+        """Make nullspace progression for song with integer id `id`."""
+        rdr = redis_client_raw(4)
+        rd0 = redis_client(3)
+        name = f'{id}_generated'
+        try:
+            piece = pickle.loads(rdr.get(id))
+            tp = int(rd0.hget(id,'type'))
+            return chdprogress.genNULL(piece, name, tp)
+        except Exception as E:
+            msg = "Song not available; please check back later."
+            logger.info(f"{msg} with exception:{E}")
+            return f"{msg} Exited with exception: {E}"

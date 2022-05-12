@@ -1,3 +1,4 @@
+import pickle
 import numpy as np
 from scipy import stats
 import musicpy as mp
@@ -13,6 +14,7 @@ import jpcm
 plt.switch_backend(backend)
 
 from app.redisclient import redis_client
+import base64
 
 #### st coordinate definition:
 def alp(R:float,r:float,t:np.array) -> np.array:
@@ -97,16 +99,23 @@ def makeLibrary() -> list:
     plt.title("Interval UV coordinate to ST coordinate Mapping")
     return uvXYZ,  uvST, ul.img(fig)
 
-try: uvXYZ
-except NameError:
-    try:
-        uvXYZ = redis_client(2).get('uvXYZ')
-        uvST = redis_client(2).get('uvST')
-    except Exception as e:
+def getLibrary() -> list:
+    """get dictionaries for transformations / mappings.
+
+    Returns:
+        dict: uv to XYZ coordinate transform (uv are keys)
+        dict: uv to ST coordinate transform (uv are keys)
+        str: base64 image of unit element on mobius mapping
+    """
+    uvXYZ = redis_client(2).get('uvXYZ')
+    uvST = redis_client(2).get('uvST')
+    if uvXYZ or uvST is None:
         uvST, uvXYZ, im_interval = makeLibrary()
-        redis_client(2).set('uvXYZ',uvXYZ)
-        redis_client(2).set('uvST',uvST)
+        redis_client(2).set('uvXYZ', base64.b64encode(pickle.dumps(uvXYZ)))
+        redis_client(2).set('uvST', base64.b64encode(pickle.dumps(uvST)))
         redis_client(2).set('im_interval',im_interval)
+        return uvXYZ, uvST
+    return  pickle.loads(base64.b64decode(uvXYZ)), pickle.loads(base64.b64decode(uvST))
 
 #### NOW for classification and transformation functions.
 
@@ -131,10 +140,16 @@ def key_chord(chordname:str) -> object:
         return mp.note_to_degree(nm)%12
     if '[' in cname:
         # a of b style
-        a,b = cname.split(']/[')
+        splits = cname.split(']/[')
+        if len(splits) == 2:
+            a,b =splits
+        if len(splits) > 2:
+            a = splits[0]
+            b = splits[-1]
+        if len(splits) == 1:
+            return key_chord(splits[0].split('/')[0].replace('[','').replace(']',''))
         return [key_chord(b),key_chord(a[1:])]
     return 'ERROR'
-
 def current_key(keys:list,w:int=8)->np.array:
     """Perform a moving mode on the keys list to get a value for the `current key`.
 
@@ -167,11 +182,11 @@ def quality(cs:object) -> np.ndarray:
         q[i,2] = e[len(e)-1]
     return q
 
-def toST(intervals:np.ndarray):
-    """Convert interval matrix to a ST-coordinate matrix (both np.ndarray elements)"""
+def toST(intervals:np.ndarray, uvST:dict) -> np.ndarray:
+    """Convert interval matrix to a ST-coordinate matrix (both np.ndarray elements) using LUT (dict) uvST"""
     return np.array([[uvST[rc] for rc in row] for row in intervals]) ### 4 (s,t) pairs for each chord element.
     
-def dST(stcoord:np.ndarray):
+def dST(stcoord:np.ndarray) -> np.ndarray:
     """simple differencing of the st coordinates (the input). 
     Returns a flattened difference array (both np.ndarray objects) with one less point (due to differencing)"""
     out = stcoord[1:] - stcoord[:-1]
@@ -180,24 +195,25 @@ def dST(stcoord:np.ndarray):
 
 #### route requests
 
-def all(piece:mp.piece) -> list:
-    """_summary_
+def all(piece:mp.piece, type:int) -> list:
+    """complete analysis of piece
 
     Args:
-        piece (mp.piece): _description_
+        piece (mp.piece): piece to analyze
+        type (int) : is this a chord progression or full piece? (really a bool)
 
     Returns:
-        list: _description_
+        list: complete information on track 0
     """
     t1 = piece.tracks[0]
-    cs = mp.chord_analysis(t1,mode='chords')
+    cs = t1.chord_analysis(get_original_order=True, is_chord=(type==1), mode='chords')
     keys = [key_chord(mp.detect(c,mode='chord')) for c in cs]
     keys = np.array([a if isinstance(a,list) else [0,a] for a in keys])
     c_key = current_key(keys)
     state = np.vstack([c_key,keys.T,quality(cs).T]).T
     intervals = np.vstack([[f"{int(state[i,0])}:{int(state[i,1])}",f"{int(state[i,1])}:{int(state[i,2])}",
             f"{int(state[i,3])}:{int(state[i,4])}",f"{int(state[i,4])}:{int(state[i,5])}"] for i in range(len(state))])
-    stcoord = toST(intervals)
+    stcoord = toST(intervals, uvST=getLibrary()[1])
     d_st = dST(stcoord)
     return cs, state, intervals, stcoord, d_st
 

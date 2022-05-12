@@ -325,3 +325,37 @@ class piece(MethodResource):
     
         return output
         
+    @app.route("/null/<int:songid>/", methods=['GET'])
+    def makenull(songid : int) -> str:
+        """ Generate nullspace piece for a particular song. Not using post to make it easily browser accessible. Not part of API (experimental).
+        ---
+        get:
+          description: Generate a nullspace piece.
+          security:
+            - ApiKeyAuth: []
+          parameters:
+          - name: songid
+            in: path
+            description: Index of song to generate for.
+            required: true
+            example: 0
+            schema:
+              type: number
+          responses:
+            200:
+              description: Index of generated song.
+              content:
+                application/json:
+                  schema: JSON            
+        """
+        route = f'/null/{songid}'
+        try:
+            output = jobs.job(['appfields','makenull',songid])
+        except Exception as E: 
+            msg = f'{route}: had exception {E}'
+            logger.error(msg)
+            return msg
+        # logger.info(f"GET : {route}")
+    
+        return output
+        

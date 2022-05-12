@@ -19,6 +19,8 @@ import pretty_midi
 import libfmp.c1
 from . import machine as mx
 
+from . import analyze as anly
+
 plt.switch_backend(backend)
 
 tmp_dir = "/app/app/static/audio/tmp"
@@ -146,7 +148,7 @@ def _plot2(ax:object,x:np.array,data:np.ndarray):
         data (np.array): emotional value matrix
     """
     leg = []                    
-    for k in range(ul.n_keys):
+    for k in range(data.shape[1]):
         ax.plot(x, data[:, k], c=ul.cs[k])
         leg.append(ul.keys[k])
         
@@ -234,7 +236,7 @@ def plot(piece : object, name : str, type: int, mt : int = 32, fgz: list = (20,8
     datas = []
     barlist = []
     for i in range(len(piece.tracks)):
-        bars, chords, chordNames, data, _ = info(piece,type,i)
+        bars, _, _, data, _ = info(piece,type,i)
         datas.append(data)
         barlist.append(bars)
     #################    
@@ -268,6 +270,46 @@ def plot(piece : object, name : str, type: int, mt : int = 32, fgz: list = (20,8
     #################
     return response    
             
+def plotST(piece : object, name : str, type: int, fgz: list = (20,8)) -> str:
+    """Plot st and dst for a single song
+
+    Args:
+        piece (object): piece to plot
+        name (str): name of piece
+        type (int): chord progression or not? (bool, really)
+        fgz (list, optional): figure size. Defaults to (20,8).
+
+    Returns:
+        str: Base64 encoded image string
+    """
+    plt.rcParams.update({'font.size': 12})
+    fig,ax = plt.subplots(3,1,figsize=fgz,sharex=True)
+    gs = mpl.gridspec.GridSpec(nrows=3,ncols=1)
+    gs.update(wspace=0.0, hspace=0.0, left=0.0, right=0.0, bottom=0.0, top=0.0) 
+    #################    
+    cs, state, intervals, stcoord, d_st = anly.all(piece, type)
+    #################
+    _plot2(ax[0],list(range(len(d_st))),d_st)
+    _plot2(ax[1],list(range(len(stcoord))),np.vstack([stcoord[:,0,0],stcoord[:,0,1],stcoord[:,1,0],stcoord[:,1,1],stcoord[:,2,0],stcoord[:,2,1],stcoord[:,3,0],stcoord[:,3,1]]).T)
+    _plot2(ax[2],list(range(len(stcoord))),np.vstack([state[:,0],state[:,2],state[:,3],state[:,4]]).T)
+    ################# 
+    ax[0].legend(["ds1","dt1","ds2","dt2","ds3","dt3","ds4","dt4"])
+    ax[1].legend(["s1","t1","s2","t2","s3","t3","s4","t4"])
+    ax[2].legend(["current-key","chord-key","quality: interval_1","quality: interval_2"])
+    ax[0].margins(0)
+    ax[1].margins(0)
+    ax[2].margins(0)
+    ax[2].set_ylabel("state\n(state-vector representation)")
+    ax[2].set_xlabel("chords into the piece")
+    ax[0].set_ylabel("dST\n(d/dt of ST)")
+    ax[1].set_ylabel("ST\n(4-interval representation of state)\nusing Mobius ST parametrization")
+    ax[0].set_title(f"Derivative-Representation for {name}\n(ST coordinate Graphs)")
+    #################
+    response = ul.img(fig)
+    plt.close()
+    #################
+    return response
+
 def mp3(piece:mp.piece,name:str): 
     """Generate an MP3 file on disk
 

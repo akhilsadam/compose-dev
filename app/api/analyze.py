@@ -84,6 +84,65 @@ class analyze(MethodResource):
           # img=resp,
         )
 
+    @app.route("/analyze/st/<int:songid>/", methods=['GET','POST'])
+    def st_single(songid : int) -> str:
+        """ Return s-t coordinate information for piece as plot
+        ---
+        get:
+          description: Get st data and return plot.
+          security:
+            - ApiKeyAuth: []
+          parameters:
+          - name: songid
+            in: path
+            description: Index (int) select from for the data list.
+            required: true
+            example: 0
+            schema:
+              type: number
+          responses:
+            200:
+              description: Return a single piece (st) plot as HTML
+              content:
+                application/html:
+                  schema: HTML   
+        post:
+          description: Update st plot for selected piece.
+          parameters:
+          - name: songid
+            in: path
+            description: Index (int) select from for the data list.
+            required: true
+            example: 0
+            schema:
+              type: number
+          responses:
+            201:
+              description: Redirect url to GET request for this url          
+        """
+        route = f'/analyze/value/{songid}/'
+        if rq.method == 'POST':
+            jobs.job(["appfields", "create_dst_plots", songid, True])
+            return redirect(f'{options.proxy}{route}')
+        resp = redis_client_raw(7).get(f'{songid}_1')
+        if resp is None:
+            jobs.job(["appfields", "create_dst_plots", songid]) # add job to queue with class name and method and args.
+            msg = "No plot available yet; a job was submitted. Please wait a few moments and try again ... \
+              If you have done so, then no such piece exists. Check route /piece for all pieces. \
+              Check route /queue for job information."
+            logger.error(f'{route}:{msg} - redis client did not find image...')
+            return msg
+        # logger.info(f"GET : {route}")
+        byte = resp.decode("utf-8").replace("\n", "")
+        return render_template(
+          "img.jinja2",
+          template='audio',
+          img=byte,
+          id=songid,
+          proxy=options.proxy
+          # img=resp,
+        )
+
     @app.route("/analyze/PCA/emotion/", methods=['GET','POST'])
     def pca_ev() -> str:
         """ Return emotional value (eV) information for all pieces as a single, PCA plot
