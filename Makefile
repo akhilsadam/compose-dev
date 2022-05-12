@@ -18,8 +18,8 @@ REPLACE=\n
 TEST=test
 PRODUCTION=production
 
-nAPI=2
-nWRK=3
+nAPI=1
+nWRK=2
 
 
 iterate: kill clean build run

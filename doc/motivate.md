@@ -1,4 +1,4 @@
-# Motivation (Akhil)
+# Motivation  
 
 Message interpretation has long been a difficulty. In stressful situations like those encountered onboard the ISS (International Space Station), or locations with poor connectivity, this problem becomes much more critical. In extreme weather conditions, such as when mountaineering, hyperventilation prevention and similar lifesaving techniques rely primarily on non-verbal communication, on the interpretation rather than the actual message. 
  
