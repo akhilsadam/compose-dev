@@ -1,18 +1,19 @@
 ---
-title: "compose"
+title: "Metacommunicative Signal Engineering"
+subtitle: "Final Project: COE 332 Software Engineering and Design"
 author:
-  - name: Anneris Rodriguez 
+  - name: Anneris Rodriguez | alr4559
     affiliation: Aerospace Department, University of Texas at Austin
     email: <annerisrod@utexas.edu>
   - name: Akhil Sadam |  as97822
     affiliation: Aerospace Department, University of Texas at Austin
     email: <akhil.sadam@utexas.edu>
-  - name: David Ventura Diaz
+  - name: David Ventura Diaz | dv9486
     affiliation: Aerospace Department, University of Texas at Austin
 date: '`r format(Sys.time(), "%d %B, %Y")`'
-abstract: ' '
+abstract: A containerized package consisting of a Flask application, data persistence using a Redis database, and a Kubernetes cluster for performing asynchronous jobs. The purpose of this project is to study the science of communication, focusing on the resurging use of music as a prominent contemporary tool for communicating. This application supplies the user with a database that stores song data in multiple formats, as well as tools that allow the analysis of one or multiple song data objects.
 # at least one keyword must be supplied
-keywords: [compose, telecommunications, music, theory, Docker, Flask, Python3, R]
+keywords: [compose, telecommunications, music, theory, linear, algebra, Docker, Flask, Kubernetes, Python3, musicpy, R]
 links-to-footnotes: true
 paged-footnotes: true
 nocite: '@*'
@@ -23,7 +24,7 @@ output:
     md_extensions: +raw_html
 link-citations: yes
 # uncomment this line to produce HTML and PDF in RStudio:
-# knit: pagedown::chrome_print
+knit: pagedown::chrome_print
 ---
 
 ```{r setup, include=FALSE}
@@ -38,28 +39,23 @@ library("methods")
 library("httr")
 ```
 
-```{r child = '../motivate.md'}
+```{r child='../motivate.md'}
 ```
 
-```{r child = '../implement.md'}
+```{r child = '../function.md'} 
+
 ```
 
-```{r child = '../input.md'}
+```{r child = '../input.md'} 
+
 ```
 
-```{r child = '../inputR.md'}
+```{r child = '../main.md'} 
+
 ```
 
-```{r child = '../install.md'}
-```
+```{r child = '../ethics.md'} 
 
-```{r child = '../installR.md'}
-```
-
-```{r child = '../usage.md'}
-```
-
-```{r child = '../ethics.md'}
 ```
 
 ```{=html}
